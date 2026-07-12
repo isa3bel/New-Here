@@ -11,6 +11,9 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 // automatically sends `Authorization: Bearer <CRON_SECRET>` when that env
 // var is set. Reading the header also forces this route to run at request
 // time rather than being prerendered.
+
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
   if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
