@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { FeedbackForm } from "./FeedbackForm";
 
 export const metadata = {
-  title: "Send feedback — NewHere",
+  title: "Send feedback — New Here",
 };
 
 // Public page — anyone (signed in or not) can submit feedback. The

@@ -183,7 +183,7 @@ function buildMockOverlay(profile: Profile): WeekOneGenerationResult {
 // Real Claude call (with web search)
 // ============================================================
 
-const SYSTEM_PROMPT = `You are a research assistant for NewHere. Your job: generate city-specific, actionable how-to guides for the 8 "Week 1" essentials a newcomer must handle in their first week in a new city.
+const SYSTEM_PROMPT = `You are a research assistant for New Here. Your job: generate city-specific, actionable how-to guides for the 8 "Week 1" essentials a newcomer must handle in their first week in a new city.
 
 The 8 slots are FIXED. You MUST return exactly these slotKey values, one entry each:
 - "w1-license"      → driver's license, vehicle registration, voter registration (state-specific)

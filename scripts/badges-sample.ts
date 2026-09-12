@@ -34,7 +34,7 @@ scenario("Complete 2 recurring tasks (coffee shop + grocery)", [
   "m1-grocery-routine",
 ]);
 
-// 80% of 28 tasks = 22.4 -> need 23 done for NewHere
+// 80% of 28 tasks = 22.4 -> need 23 done for New Here
 scenario("Complete 23 of 28 tasks (82%)", [
   "w1-license","w1-address","w1-utilities","w1-library","w1-health","w1-transit","w1-daily-shops","w1-home-safety",
   "m1-coffee-regular","m1-grocery-routine","m1-climbing-gym","m1-meetup-rsvp","m1-run-club","m1-new-bookstore",

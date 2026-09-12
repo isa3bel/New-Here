@@ -1,5 +1,5 @@
 -- ============================================================
--- NewHere — AI scaffolding (cache + audit log)
+-- New Here — AI scaffolding (cache + audit log)
 -- ============================================================
 -- Purely additive on top of 0001. Safe to run repeatedly.
 -- No drops, no enum changes — `if not exists` everywhere so

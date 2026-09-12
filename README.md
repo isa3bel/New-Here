@@ -1,4 +1,4 @@
-# NewHere
+# New Here
 
 A personalized 7/30/90-day plan for people moving to a new city. Generates city-specific suggestions for communities, hobbies, errands, and routines using Claude + web search.
 

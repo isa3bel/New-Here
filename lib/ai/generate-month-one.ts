@@ -286,7 +286,7 @@ function buildMockTiles(profile: Profile): Month1GenerationResult {
 // Real Claude call (with web search)
 // ============================================================
 
-const SYSTEM_PROMPT = `You are a research assistant for NewHere. Generate "Try things" tiles for a user's Month 1 in a new city — organizations and communities the user can join in their first 30 days that have RECURRING activities.
+const SYSTEM_PROMPT = `You are a research assistant for New Here. Generate "Try things" tiles for a user's Month 1 in a new city — organizations and communities the user can join in their first 30 days that have RECURRING activities.
 
 The user has picked 1–3 GOALS (e.g. "Make new friends", "Build healthy habits", or a custom phrase). For each goal, produce exactly **3 tiles** that map to that goal. So 1 goal → 3 tiles, 2 goals → 6 tiles, 3 goals → 9 tiles. The "cluster" field on each tile MUST be the verbatim text of one of the user's goals.
 

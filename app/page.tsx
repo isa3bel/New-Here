@@ -32,7 +32,7 @@ function Footer() {
     <footer className="w-full bg-[#1a1a1a] text-gray-400 rounded-t-3xl mt-12">
       <div className="max-w-6xl mx-auto px-6 sm:px-10 py-12 sm:py-14">
         <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
-          <span className="text-gray-300">© 2026 NewHere</span>
+          <span className="text-gray-300">© 2026 New Here</span>
           <Link
             href="/terms"
             className="hover:text-white transition"
@@ -70,7 +70,7 @@ function Footer() {
           <span aria-hidden>💛</span>
           <span>
             by{" "}
-            <span className="font-semibold text-gray-200">NewHere</span> ·
+            <span className="font-semibold text-gray-200">New Here</span> ·
             Private beta
           </span>
         </div>
@@ -102,7 +102,7 @@ function Hero() {
       <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-14 items-center">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent)] mb-6">
-            NewHere
+            New Here
           </p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
             Land. Try things.{" "}
@@ -268,7 +268,7 @@ function HowItWorks() {
   return (
     <section className="w-full max-w-5xl px-6 py-20 sm:py-28">
       <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center mb-14 sm:mb-16">
-        How NewHere works
+        How New Here works
       </h2>
 
       <div className="relative">

@@ -389,7 +389,7 @@ export const mockBadges: Badge[] = [
   {
     id: "b5",
     slug: "newhere",
-    name: "NewHere",
+    name: "New Here",
     description: "Complete 80% of your plan",
     icon: "🌳",
     criteria: { type: "completion_pct", pct: 80 },

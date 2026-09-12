@@ -1,6 +1,6 @@
-# NewHere — Product Requirements
+# New Here — Product Requirements
 
-A living document describing what NewHere is, who it's for, and the product decisions that shaped it. For technical architecture see [README.md](README.md).
+A living document describing what New Here is, who it's for, and the product decisions that shaped it. For technical architecture see [README.md](README.md).
 
 ## 1. Target user
 
@@ -12,7 +12,7 @@ Primary persona: a 28-year-old who moved for a job, knows nobody locally, has 3 
 
 Moving to a new city creates a friction-heavy gap between *intending* to build a life and *actually* showing up. Existing tools (Meetup, Reddit, Google) surface options but don't sequence them, don't account for personal interests or social style, and don't tell you which local utility company to call. Users churn before they form any routine.
 
-NewHere reframes "build a life in a new city" as a concrete time-boxed plan with checkable actions, personalized to the specific city the user is moving to.
+New Here reframes "build a life in a new city" as a concrete time-boxed plan with checkable actions, personalized to the specific city the user is moving to.
 
 ## 3. Product shape
 

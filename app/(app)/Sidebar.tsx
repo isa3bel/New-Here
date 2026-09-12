@@ -10,7 +10,7 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/plan", label: "NewHere Plan", icon: "📋" },
+  { href: "/plan", label: "New Here Plan", icon: "📋" },
   { href: "/profile", label: "Profile", icon: "👤" },
   { href: "/feedback", label: "Send feedback", icon: "💬" },
 ];
@@ -26,7 +26,7 @@ export function Sidebar() {
           className="flex items-center gap-2 px-6 py-6 text-lg font-semibold"
         >
           <span className="text-2xl" aria-hidden>🌿</span>
-          <span>NewHere</span>
+          <span>New Here</span>
         </Link>
 
         <nav className="flex-1 px-3">

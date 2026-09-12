@@ -6,7 +6,7 @@ import { ImageResponse } from "next/og";
 // spells it out.
 
 export const alt =
-  "NewHere — Your personalized 7/30/90-day plan for a new city";
+  "New Here — Your personalized 7/30/90-day plan for a new city";
 
 export const size = {
   width: 1200,
@@ -42,7 +42,7 @@ export default async function Image() {
           }}
         >
           <span style={{ fontSize: 64 }}>🌿</span>
-          <span style={{ fontWeight: 700, letterSpacing: -0.5 }}>NewHere</span>
+          <span style={{ fontWeight: 700, letterSpacing: -0.5 }}>New Here</span>
         </div>
 
         {/* Middle: main headline (two lines, each its own flex child) */}

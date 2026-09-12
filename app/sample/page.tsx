@@ -17,7 +17,7 @@ import {
 } from "./sample-month-one";
 import { SAMPLE_AUSTIN_WEEK_ONE } from "./sample-week-one";
 
-// Public, no-auth sample of what a personalized NewHere plan looks like.
+// Public, no-auth sample of what a personalized New Here plan looks like.
 // Uses the static mock task data, hard-coded "Austin, mid-Month-1" persona,
 // and a couple of anchors so the Routine / calendar surfaces are populated.
 //

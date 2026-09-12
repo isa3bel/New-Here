@@ -25,11 +25,11 @@ export default async function AppLayout({
       {/* Mobile-only top nav: shows the two app sections horizontally */}
       <div className="lg:hidden border-b border-[var(--border)] bg-[var(--card)] px-4 py-3 flex items-center gap-4 overflow-x-auto">
         <Link href="/" className="font-semibold whitespace-nowrap">
-          🌿 NewHere
+          🌿 New Here
         </Link>
         <span className="text-[var(--border)]">·</span>
         <Link href="/plan" className="text-sm whitespace-nowrap">
-          NewHere Plan
+          New Here Plan
         </Link>
         <Link href="/profile" className="text-sm whitespace-nowrap">
           Profile

@@ -34,20 +34,20 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "NewHere — Your 7/30/90-day plan for a new city",
+  title: "New Here — Your 7/30/90-day plan for a new city",
   description:
     "A personalized 7/30/90-day plan to help you find communities, hobbies, and routines after moving to a new city.",
   openGraph: {
     type: "website",
     url: SITE_URL,
-    siteName: "NewHere",
-    title: "NewHere — Your first 90 days in any new city",
+    siteName: "New Here",
+    title: "New Here — Your first 90 days in any new city",
     description:
       "A personalized plan that adapts to your city, interests, and timeline — so you can find your community, anchor your routine, and feel at home.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "NewHere — Your first 90 days in any new city",
+    title: "New Here — Your first 90 days in any new city",
     description:
       "A personalized plan that adapts to your city, interests, and timeline — so you can find your community, anchor your routine, and feel at home.",
   },

@@ -1,5 +1,5 @@
 -- ============================================================
--- NewHere MVP — initial schema
+-- New Here MVP — initial schema
 -- ============================================================
 -- Apply once via Supabase SQL editor, or `supabase db push` if you
 -- set up the CLI later. This migration is run-once: subsequent
@@ -252,4 +252,4 @@ insert into badges (slug, name, description, icon, criteria) values
   ('momentum',   'Momentum',   'Complete 3 tasks',                               '⚡', '{"type":"tasks_completed","count":3}'),
   ('showed_up',  'Showed Up',  'Mark an event-attendance task complete',         '👋', '{"type":"event_attendance","count":1}'),
   ('regular',    'Regular',    'Complete 2 recurring-activity tasks',            '🔁', '{"type":"recurring_completed","count":2}'),
-  ('newhere',    'NewHere',    'Complete 80% of your plan',                      '🌳', '{"type":"completion_pct","pct":80}');
+  ('newhere',    'New Here',   'Complete 80% of your plan',                      '🌳', '{"type":"completion_pct","pct":80}');

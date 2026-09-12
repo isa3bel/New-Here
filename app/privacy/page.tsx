@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Privacy Policy — NewHere",
+  title: "Privacy Policy — New Here",
 };
 
 const EFFECTIVE_DATE = "May 26, 2026";
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </p>
           <h1 className="text-3xl font-semibold tracking-tight mt-2">
-            NewHere Privacy Policy
+            New Here Privacy Policy
           </h1>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             Effective {EFFECTIVE_DATE}
@@ -31,10 +31,10 @@ export default function PrivacyPage() {
 
         <Section title="Overview">
           <p>
-            This Privacy Policy describes how NewHere (&ldquo;NewHere,&rdquo;
+            This Privacy Policy describes how New Here (&ldquo;New Here,&rdquo;
             &ldquo;we,&rdquo; or &ldquo;our&rdquo;) collects, uses, and protects
             information when you use our website and services. By accessing or
-            using NewHere, you agree to the practices described in this policy.
+            using New Here, you agree to the practices described in this policy.
           </p>
         </Section>
 
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
               information at any time.
             </li>
             <li>
-              <strong>Usage information.</strong> As you use NewHere, we record
+              <strong>Usage information.</strong> As you use New Here, we record
               your activity within the service — including which tasks you mark
               complete, which you save to your routine, which you dismiss, and
               the badges you earn.
@@ -99,14 +99,14 @@ export default function PrivacyPage() {
             under any circumstance.
           </p>
           <p>
-            <strong>NewHere personnel.</strong> Authorized members of the
-            NewHere team may access user data when necessary to operate,
+            <strong>New Here personnel.</strong> Authorized members of the
+            New Here team may access user data when necessary to operate,
             support, or improve the service. Access is logged and limited to
             legitimate operational purposes.
           </p>
           <p>
             <strong>Service providers.</strong> We rely on a small number of
-            vetted third parties to operate NewHere. See &ldquo;Third-Party
+            vetted third parties to operate New Here. See &ldquo;Third-Party
             Services&rdquo; below for details.
           </p>
           <p>
@@ -119,7 +119,7 @@ export default function PrivacyPage() {
 
         <Section title="Third-Party Services">
           <p>
-            NewHere uses the following service providers, each governed by its
+            New Here uses the following service providers, each governed by its
             own privacy policy and security standards:
           </p>
           <ul>
@@ -133,7 +133,7 @@ export default function PrivacyPage() {
               data.
             </li>
             <li>
-              <strong>Vercel</strong> &mdash; hosts the NewHere web application
+              <strong>Vercel</strong> &mdash; hosts the New Here web application
               and processes user requests.
             </li>
           </ul>
@@ -198,7 +198,7 @@ export default function PrivacyPage() {
 
         <Section title="Children's Privacy">
           <p>
-            NewHere is not directed to children under 13, and we do not
+            New Here is not directed to children under 13, and we do not
             knowingly collect personal information from children. If we become
             aware that we have collected such information, we will promptly
             delete it.

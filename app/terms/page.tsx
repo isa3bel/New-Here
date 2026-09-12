@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Terms of Service — NewHere",
+  title: "Terms of Service — New Here",
 };
 
 const EFFECTIVE_DATE = "June 6, 2026";
@@ -22,7 +22,7 @@ export default function TermsPage() {
             Terms of Service
           </p>
           <h1 className="text-3xl font-semibold tracking-tight mt-2">
-            NewHere Terms of Service
+            New Here Terms of Service
           </h1>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             Effective {EFFECTIVE_DATE}
@@ -31,7 +31,7 @@ export default function TermsPage() {
 
         <Section title="Acceptance">
           <p>
-            By using NewHere (&ldquo;NewHere,&rdquo; &ldquo;we,&rdquo;
+            By using New Here (&ldquo;New Here,&rdquo; &ldquo;we,&rdquo;
             &ldquo;our&rdquo;), you agree to these Terms of Service. If you do
             not agree, please do not use the service.
           </p>
@@ -39,7 +39,7 @@ export default function TermsPage() {
 
         <Section title="The Service">
           <p>
-            NewHere generates personalized 7/30/90-day plans for people moving
+            New Here generates personalized 7/30/90-day plans for people moving
             to a new city. The plan includes suggested tasks, local
             communities, and routines based on your stated city, interests,
             goals, and other onboarding answers. Suggestions are generated
@@ -57,7 +57,7 @@ export default function TermsPage() {
           <p>
             You sign in with a magic link sent to your email address. You are
             responsible for maintaining the security of the email account
-            associated with NewHere. You may delete your account and all
+            associated with New Here. You may delete your account and all
             associated data at any time from your{" "}
             <Link
               href="/profile"
@@ -68,7 +68,7 @@ export default function TermsPage() {
             .
           </p>
           <p>
-            You must be at least 13 years old to use NewHere.
+            You must be at least 13 years old to use New Here.
           </p>
         </Section>
 
@@ -100,10 +100,10 @@ export default function TermsPage() {
 
         <Section title="AI-Generated Content">
           <p>
-            NewHere uses large language models and web search to generate
+            New Here uses large language models and web search to generate
             recommendations. AI output is best-effort and may be inaccurate,
             out of date, or incomplete. Always verify important details
-            (hours, prices, locations) before acting on a suggestion. NewHere
+            (hours, prices, locations) before acting on a suggestion. New Here
             is not responsible for outcomes resulting from third-party events,
             organizations, or services we surface.
           </p>
@@ -112,7 +112,7 @@ export default function TermsPage() {
         <Section title="Third-Party Services">
           <p>
             Tasks and suggestions may link to third-party websites,
-            organizations, and services. NewHere does not control and is not
+            organizations, and services. New Here does not control and is not
             responsible for the availability, content, or practices of those
             third parties. Your use of any third-party service is governed by
             that party&apos;s own terms.
@@ -122,7 +122,7 @@ export default function TermsPage() {
         <Section title="Your Content">
           <p>
             You retain ownership of the information you provide (city,
-            interests, goals, custom anchors, feedback). You grant NewHere
+            interests, goals, custom anchors, feedback). You grant New Here
             permission to store, process, and display this information to
             provide the service to you.
           </p>
@@ -130,7 +130,7 @@ export default function TermsPage() {
 
         <Section title="Beta Disclaimer">
           <p>
-            NewHere is currently a private beta and is provided
+            New Here is currently a private beta and is provided
             &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without
             warranties of any kind, whether express or implied, including but
             not limited to merchantability, fitness for a particular purpose,
@@ -141,7 +141,7 @@ export default function TermsPage() {
 
         <Section title="Limitation of Liability">
           <p>
-            To the maximum extent permitted by law, NewHere will not be liable
+            To the maximum extent permitted by law, New Here will not be liable
             for any indirect, incidental, consequential, or punitive damages
             arising out of or related to your use of the service. Our total
             liability for any claim relating to the service is limited to one
@@ -151,7 +151,7 @@ export default function TermsPage() {
 
         <Section title="Termination">
           <p>
-            We may suspend or terminate your access to NewHere at any time,
+            We may suspend or terminate your access to New Here at any time,
             with or without cause, including for violation of these terms.
             You may stop using the service and delete your account at any
             time.
@@ -163,7 +163,7 @@ export default function TermsPage() {
             We may update these terms from time to time. When we do, we will
             update the effective date at the top of this page. If the changes
             are material, we will notify you through the service or by email.
-            Your continued use of NewHere after the changes take effect
+            Your continued use of New Here after the changes take effect
             constitutes acceptance of the updated terms.
           </p>
         </Section>

@@ -22,7 +22,7 @@ export default async function SignInPage({
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)] mb-2">
-            NewHere
+            New Here
           </p>
           <h1 className="text-3xl font-semibold tracking-tight">
             Sign in to your plan
