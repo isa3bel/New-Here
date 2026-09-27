@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { AnimatePresence, motion } from "@/app/_components/motion";
+
 // Autocomplete for city + neighborhood, powered by Mapbox Search Box
 // via a server-side proxy (/api/mapbox/*). The Mapbox token lives only
 // on the server — the browser never sees it.
@@ -207,15 +209,17 @@ function MapboxLocationFields({
             required
             placeholder="Start typing — e.g. Austin"
             autoComplete="off"
-            className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none focus:border-[var(--accent)]"
+            className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none transition-colors focus:border-[var(--accent)]"
           />
           <input type="hidden" name="city" value={cityCommitted} />
-          {cityListOpen && citySuggestions.length > 0 && (
-            <SuggestionList
-              suggestions={citySuggestions}
-              onPick={handleCityPick}
-            />
-          )}
+          <AnimatePresence>
+            {cityListOpen && citySuggestions.length > 0 && (
+              <SuggestionList
+                suggestions={citySuggestions}
+                onPick={handleCityPick}
+              />
+            )}
+          </AnimatePresence>
         </div>
       </FieldWrapper>
 
@@ -233,15 +237,17 @@ function MapboxLocationFields({
             placeholder="e.g. East Austin"
             autoComplete="off"
             maxLength={80}
-            className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none focus:border-[var(--accent)]"
+            className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none transition-colors focus:border-[var(--accent)]"
           />
           <input type="hidden" name="neighborhood" value={hoodCommitted} />
-          {hoodListOpen && hoodSuggestions.length > 0 && (
-            <SuggestionList
-              suggestions={hoodSuggestions}
-              onPick={handleHoodPick}
-            />
-          )}
+          <AnimatePresence>
+            {hoodListOpen && hoodSuggestions.length > 0 && (
+              <SuggestionList
+                suggestions={hoodSuggestions}
+                onPick={handleHoodPick}
+              />
+            )}
+          </AnimatePresence>
         </div>
       </FieldWrapper>
     </>
@@ -256,8 +262,12 @@ function SuggestionList({
   onPick: (s: Suggestion) => void;
 }) {
   return (
-    <ul
+    <motion.ul
       role="listbox"
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.15 }}
       className="absolute z-20 mt-1 w-full bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-lg max-h-64 overflow-auto"
     >
       {suggestions.map((s) => (
@@ -268,7 +278,7 @@ function SuggestionList({
             // before onClick has a chance to fire.
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => onPick(s)}
-            className="w-full text-left px-3 py-2 hover:bg-[var(--background)] transition"
+            className="w-full text-left px-3 py-2 cursor-pointer transition-colors hover:bg-[var(--background)]"
           >
             <div className="font-medium text-sm leading-snug">{s.name}</div>
             {s.place_formatted && (
@@ -279,7 +289,7 @@ function SuggestionList({
           </button>
         </li>
       ))}
-    </ul>
+    </motion.ul>
   );
 }
 
@@ -323,7 +333,7 @@ function PlainFallback({
           required
           defaultValue={defaultCity ?? ""}
           placeholder="Austin, TX"
-          className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none focus:border-[var(--accent)]"
+          className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none transition-colors focus:border-[var(--accent)]"
         />
       </FieldWrapper>
 
@@ -337,7 +347,7 @@ function PlainFallback({
           maxLength={80}
           defaultValue={defaultNeighborhood ?? ""}
           placeholder="e.g. Mission District, East Austin, Williamsburg"
-          className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none focus:border-[var(--accent)]"
+          className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none transition-colors focus:border-[var(--accent)]"
         />
       </FieldWrapper>
     </>

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { Reveal } from "@/app/_components/motion";
+
 import { SearchProgress } from "../SearchProgress";
 import { requireUser } from "@/lib/auth";
 import { getProfile } from "@/lib/db";
@@ -29,19 +31,21 @@ export default async function LoadingPreviewPage({
           ← Back to For You
         </Link>
 
-        <header className="mt-6">
-          <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
-            Loading-state preview
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight mt-2">
-            What AI search will look like while it&apos;s thinking
-          </h1>
-          <p className="mt-2 text-[var(--muted-foreground)]">
-            This is the React Suspense fallback that will render while Claude
-            is running web_search and extracting results. Refresh to watch the
-            stages cycle again.
-          </p>
-        </header>
+        <Reveal>
+          <header className="mt-6">
+            <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
+              Loading-state preview
+            </p>
+            <h1 className="text-3xl font-semibold tracking-tight mt-2">
+              What AI search will look like while it&apos;s thinking
+            </h1>
+            <p className="mt-2 text-[var(--muted-foreground)]">
+              This is the React Suspense fallback that will render while Claude
+              is running web_search and extracting results. Refresh to watch the
+              stages cycle again.
+            </p>
+          </header>
+        </Reveal>
 
         <SearchProgress query={query} city={profile?.city} />
 

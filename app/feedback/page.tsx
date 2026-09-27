@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Reveal } from "@/app/_components/motion";
 import { getCurrentUser } from "@/lib/auth";
 
 import { FeedbackForm } from "./FeedbackForm";
@@ -21,36 +22,40 @@ export default async function FeedbackPage() {
       <div className="w-full max-w-2xl px-6 py-12">
         <Link
           href="/"
-          className="text-sm text-[var(--muted-foreground)] hover:underline"
+          className="text-sm text-[var(--muted-foreground)] transition-colors hover:underline"
         >
           ← Home
         </Link>
 
-        <header className="mt-6">
-          <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
-            Feedback
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight mt-2">
-            Send us a note
-          </h1>
-          <p className="mt-2 text-[var(--muted-foreground)]">
-            We&apos;re in early beta — every bug, gripe, and idea makes the
-            next version better. Submissions land directly in our internal
-            dashboard.
-          </p>
-        </header>
+        <Reveal className="mt-6">
+          <header>
+            <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
+              Feedback
+            </p>
+            <h1 className="text-3xl font-semibold tracking-tight mt-2">
+              Send us a note
+            </h1>
+            <p className="mt-2 text-[var(--muted-foreground)]">
+              We&apos;re in early beta — every bug, gripe, and idea makes the
+              next version better. Submissions land directly in our internal
+              dashboard.
+            </p>
+          </header>
+        </Reveal>
 
         {!user && (
-          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm text-[var(--muted-foreground)]">
-            You can send feedback without signing in. If you&apos;d like a
-            reply, drop your email in the message and we&apos;ll get back to
-            you.
-          </div>
+          <Reveal delay={0.05}>
+            <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm text-[var(--muted-foreground)]">
+              You can send feedback without signing in. If you&apos;d like a
+              reply, drop your email in the message and we&apos;ll get back to
+              you.
+            </div>
+          </Reveal>
         )}
 
-        <div className="mt-10">
+        <Reveal delay={0.1} className="mt-10">
           <FeedbackForm />
-        </div>
+        </Reveal>
       </div>
     </main>
   );

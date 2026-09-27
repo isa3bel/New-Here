@@ -1,3 +1,4 @@
+import { Pressable, Stagger, StaggerItem } from "@/app/_components/motion";
 import { GoalsField } from "@/app/onboarding/GoalsField";
 import { InterestsField } from "@/app/onboarding/InterestsField";
 import { LocationFields } from "@/app/onboarding/LocationFields";
@@ -60,113 +61,133 @@ type Props = {
 export function ProfileForm({ existing, action, submitLabel }: Props) {
   return (
     <form action={action} className="space-y-8">
-      <Field label="Your name">
-        <input
-          type="text"
-          name="displayName"
-          defaultValue={existing?.displayName ?? ""}
-          placeholder="Isabel"
-          className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none focus:border-[var(--accent)]"
-        />
-      </Field>
+      <Stagger className="space-y-8">
+        <StaggerItem>
+          <Field label="Your name">
+            <input
+              type="text"
+              name="displayName"
+              defaultValue={existing?.displayName ?? ""}
+              placeholder="Isabel"
+              className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none transition-colors focus:border-[var(--accent)]"
+            />
+          </Field>
+        </StaggerItem>
 
-      <LocationFields
-        defaultCity={existing?.city}
-        defaultNeighborhood={existing?.neighborhood}
-        mapboxEnabled={Boolean(process.env.MAPBOX_TOKEN)}
-      />
-
-      <Field label="Move date" required>
-        <input
-          type="date"
-          name="moveDate"
-          required
-          defaultValue={existing?.moveDate ?? ""}
-          className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none focus:border-[var(--accent)]"
-        />
-      </Field>
-
-      <Field label="How outgoing are you?">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          {SOCIAL_STYLE_OPTIONS.map((opt) => (
-            <label
-              key={opt.style}
-              className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 text-left has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent)] has-[:checked]:text-[var(--accent-foreground)]"
-            >
-              <input
-                type="radio"
-                name="socialStyle"
-                value={opt.style}
-                defaultChecked={existing?.socialStyle === opt.style}
-                className="sr-only"
-              />
-              <div className="font-semibold capitalize">{opt.style}</div>
-              <p className="text-sm mt-2 leading-snug">{opt.blurb}</p>
-            </label>
-          ))}
-        </div>
-      </Field>
-
-      <Field label="Budget for activities">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          {BUDGET_OPTIONS.map((opt) => (
-            <label
-              key={opt.tier}
-              className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 text-left has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent)] has-[:checked]:text-[var(--accent-foreground)]"
-            >
-              <input
-                type="radio"
-                name="budgetTier"
-                value={opt.tier}
-                defaultChecked={existing?.budgetTier === opt.tier}
-                className="sr-only"
-              />
-              <div className="font-semibold capitalize">{opt.tier}</div>
-              <div className="text-xs mt-0.5 opacity-80">{opt.range}</div>
-              <p className="text-sm mt-2 leading-snug">{opt.blurb}</p>
-            </label>
-          ))}
-        </div>
-      </Field>
-
-      <Field label="Do you have a car?">
-        <label className="inline-flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            name="hasCar"
-            defaultChecked={existing?.hasCar ?? false}
-            className="h-4 w-4 accent-[var(--accent)]"
+        <StaggerItem>
+          <LocationFields
+            defaultCity={existing?.city}
+            defaultNeighborhood={existing?.neighborhood}
+            mapboxEnabled={Boolean(process.env.MAPBOX_TOKEN)}
           />
-          <span className="text-sm">Yes</span>
-        </label>
-      </Field>
+        </StaggerItem>
 
-      <Field label="What are you into? (pick any, or add your own)">
-        <InterestsField
-          name="interests"
-          predefined={INTEREST_TAGS}
-          defaultSelected={existing?.interests ?? []}
-        />
-      </Field>
+        <StaggerItem>
+          <Field label="Move date" required>
+            <input
+              type="date"
+              name="moveDate"
+              required
+              defaultValue={existing?.moveDate ?? ""}
+              className="w-full h-11 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 outline-none transition-colors focus:border-[var(--accent)]"
+            />
+          </Field>
+        </StaggerItem>
 
-      <Field
-        label="What're your top three goals?"
-        required
-        hint="Pick up to three — or add your own. These shape which 'Try things' suggestions appear in Month 1."
-      >
-        <GoalsField
-          name="goals"
-          predefined={GOAL_TAGS}
-          defaultSelected={existing?.goals ?? []}
-        />
-      </Field>
+        <StaggerItem>
+          <Field label="How outgoing are you?">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {SOCIAL_STYLE_OPTIONS.map((opt) => (
+                <Pressable key={opt.style} className="h-full">
+                  <label className="block h-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 text-left transition-colors has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent)] has-[:checked]:text-[var(--accent-foreground)]">
+                    <input
+                      type="radio"
+                      name="socialStyle"
+                      value={opt.style}
+                      defaultChecked={existing?.socialStyle === opt.style}
+                      className="sr-only"
+                    />
+                    <div className="font-semibold capitalize">{opt.style}</div>
+                    <p className="text-sm mt-2 leading-snug">{opt.blurb}</p>
+                  </label>
+                </Pressable>
+              ))}
+            </div>
+          </Field>
+        </StaggerItem>
 
-      <button
-        type="submit"
-        className="w-full h-12 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)] font-medium hover:opacity-90 transition"
-      >
-        {submitLabel}
-      </button>
+        <StaggerItem>
+          <Field label="Budget for activities">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {BUDGET_OPTIONS.map((opt) => (
+                <Pressable key={opt.tier} className="h-full">
+                  <label className="block h-full cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 text-left transition-colors has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent)] has-[:checked]:text-[var(--accent-foreground)]">
+                    <input
+                      type="radio"
+                      name="budgetTier"
+                      value={opt.tier}
+                      defaultChecked={existing?.budgetTier === opt.tier}
+                      className="sr-only"
+                    />
+                    <div className="font-semibold capitalize">{opt.tier}</div>
+                    <div className="text-xs mt-0.5 opacity-80">{opt.range}</div>
+                    <p className="text-sm mt-2 leading-snug">{opt.blurb}</p>
+                  </label>
+                </Pressable>
+              ))}
+            </div>
+          </Field>
+        </StaggerItem>
+
+        <StaggerItem>
+          <Field label="Do you have a car?">
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                name="hasCar"
+                defaultChecked={existing?.hasCar ?? false}
+                className="h-4 w-4 accent-[var(--accent)]"
+              />
+              <span className="text-sm">Yes</span>
+            </label>
+          </Field>
+        </StaggerItem>
+
+        <StaggerItem>
+          <Field label="What are you into? (pick any, or add your own)">
+            <InterestsField
+              name="interests"
+              predefined={INTEREST_TAGS}
+              defaultSelected={existing?.interests ?? []}
+            />
+          </Field>
+        </StaggerItem>
+
+        <StaggerItem>
+          <Field
+            label="What're your top three goals?"
+            required
+            hint="Pick up to three — or add your own. These shape which 'Try things' suggestions appear in Month 1."
+          >
+            <GoalsField
+              name="goals"
+              predefined={GOAL_TAGS}
+              defaultSelected={existing?.goals ?? []}
+            />
+          </Field>
+        </StaggerItem>
+
+        <StaggerItem>
+          <Pressable>
+            <button
+              type="submit"
+              className="w-full h-12 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)] font-medium cursor-pointer transition-opacity hover:opacity-90"
+            >
+              {submitLabel}
+            </button>
+          </Pressable>
+        </StaggerItem>
+      </Stagger>
     </form>
   );
 }

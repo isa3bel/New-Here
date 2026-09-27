@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { Reveal } from "@/app/_components/motion";
+
 import { SignInForm } from "./SignInForm";
 
 export default async function SignInPage({
@@ -14,13 +16,13 @@ export default async function SignInPage({
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-8 relative">
       <Link
         href="/"
-        className="absolute top-6 left-6 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:underline"
+        className="absolute top-6 left-6 text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)] hover:underline"
       >
         ← Back
       </Link>
 
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+        <Reveal className="text-center mb-8">
           <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)] mb-2">
             New Here
           </p>
@@ -30,15 +32,22 @@ export default async function SignInPage({
           <p className="mt-2 text-[var(--muted-foreground)]">
             We&apos;ll email you a one-tap link. No password needed.
           </p>
-        </div>
-        <SignInForm next={next} />
-        <p className="mt-6 text-center text-xs text-[var(--muted-foreground)]">
-          By signing in, you agree to our{" "}
-          <Link href="/privacy" className="underline hover:text-[var(--foreground)]">
-            privacy practices
-          </Link>
-          .
-        </p>
+        </Reveal>
+        <Reveal delay={0.08}>
+          <SignInForm next={next} />
+        </Reveal>
+        <Reveal delay={0.12}>
+          <p className="mt-6 text-center text-xs text-[var(--muted-foreground)]">
+            By signing in, you agree to our{" "}
+            <Link
+              href="/privacy"
+              className="underline transition-colors hover:text-[var(--foreground)]"
+            >
+              privacy practices
+            </Link>
+            .
+          </p>
+        </Reveal>
       </div>
     </main>
   );

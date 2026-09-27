@@ -28,3 +28,29 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(0, -14px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+.animate-float-slow-delayed {
+  animation: float-slow 8s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-slow-delayed {
+    animation: none;
+  }
+}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Pressable, Reveal, Stagger, StaggerItem } from "@/app/_components/motion";
 import { getCurrentUser } from "@/lib/auth";
 import { getProfile } from "@/lib/db";
 
@@ -87,20 +88,20 @@ function Hero() {
     <section className="relative w-full max-w-6xl px-6 pt-16 pb-12 sm:pt-24 sm:pb-16">
       {/* Decorative pastel blobs floating behind the content. */}
       <div
-        className="pointer-events-none absolute top-8 -left-12 w-48 h-48 rounded-full bg-pink-300/30 blur-3xl -z-10"
+        className="animate-float-slow pointer-events-none absolute top-8 -left-12 w-48 h-48 rounded-full bg-pink-300/30 blur-3xl -z-10"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute top-32 right-0 w-56 h-56 rounded-full bg-yellow-300/30 blur-3xl -z-10"
+        className="animate-float-slow-delayed pointer-events-none absolute top-32 right-0 w-56 h-56 rounded-full bg-yellow-300/30 blur-3xl -z-10"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute bottom-0 left-1/3 w-40 h-40 rounded-full bg-purple-300/30 blur-3xl -z-10"
+        className="animate-float-slow pointer-events-none absolute bottom-0 left-1/3 w-40 h-40 rounded-full bg-purple-300/30 blur-3xl -z-10"
         aria-hidden
       />
 
       <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-14 items-center">
-        <div>
+        <Reveal>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent)] mb-6">
             New Here
           </p>
@@ -130,12 +131,14 @@ function Hero() {
             .
           </p>
           <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
-            <Link
-              href="/onboarding"
-              className="inline-flex h-12 items-center justify-center rounded-full bg-[var(--accent)] px-7 text-base font-medium text-[var(--accent-foreground)] hover:opacity-90 transition shadow-sm"
-            >
-              Get my plan →
-            </Link>
+            <Pressable className="inline-block">
+              <Link
+                href="/onboarding"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-[var(--accent)] px-7 text-base font-medium text-[var(--accent-foreground)] hover:opacity-90 transition shadow-sm"
+              >
+                Get my plan →
+              </Link>
+            </Pressable>
             <Link
               href="/sample"
               className="text-base font-medium text-[var(--foreground)] hover:text-[var(--accent)] underline-offset-4 hover:underline transition"
@@ -143,31 +146,40 @@ function Hero() {
               View a sample plan
             </Link>
           </div>
-        </div>
+        </Reveal>
 
         {/* Photo collage — hidden on small screens to keep the hero tight. */}
-        <div className="relative h-[440px] hidden lg:block">
-          <PhotoTile
-            src="https://plus.unsplash.com/premium_photo-1664302152991-d013ff125f3f?q=80&w=500&h=500&auto=format&fit=crop"
-            alt="Essential moving-day items laid out — the kind of setup you tackle in week 1"
-            position="absolute top-0 left-0 w-44 h-44 -rotate-3"
-            tag="Week 1 · Set up essentials"
-            tagColor="bg-yellow-200"
-          />
-          <PhotoTile
-            src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=500&h=500&fit=crop&auto=format&q=80"
-            alt="Group of runners on a path"
-            position="absolute top-8 right-2 w-52 h-52 rotate-2"
-            tag="Month 1 · Run club"
-            tagColor="bg-pink-200"
-          />
-          <PhotoTile
-            src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=500&h=500&fit=crop&auto=format&q=80"
-            alt="Golden Gate Bridge at sunset"
-            position="absolute bottom-0 left-12 w-40 h-40 -rotate-2"
-            tag="Quarter 1 · This is home"
-            tagColor="bg-purple-200"
-          />
+        <Stagger className="relative h-[440px] hidden lg:block">
+          <StaggerItem className="absolute top-0 left-0 w-44 h-44">
+            <div className="-rotate-3 w-full h-full">
+              <PhotoTile
+                src="https://plus.unsplash.com/premium_photo-1664302152991-d013ff125f3f?q=80&w=500&h=500&auto=format&fit=crop"
+                alt="Essential moving-day items laid out — the kind of setup you tackle in week 1"
+                tag="Week 1 · Set up essentials"
+                tagColor="bg-yellow-200"
+              />
+            </div>
+          </StaggerItem>
+          <StaggerItem className="absolute top-8 right-2 w-52 h-52">
+            <div className="rotate-2 w-full h-full">
+              <PhotoTile
+                src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=500&h=500&fit=crop&auto=format&q=80"
+                alt="Group of runners on a path"
+                tag="Month 1 · Run club"
+                tagColor="bg-pink-200"
+              />
+            </div>
+          </StaggerItem>
+          <StaggerItem className="absolute bottom-0 left-12 w-40 h-40">
+            <div className="-rotate-2 w-full h-full">
+              <PhotoTile
+                src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=500&h=500&fit=crop&auto=format&q=80"
+                alt="Golden Gate Bridge at sunset"
+                tag="Quarter 1 · This is home"
+                tagColor="bg-purple-200"
+              />
+            </div>
+          </StaggerItem>
           {/* Decorative scribble */}
           <svg
             className="absolute top-32 right-32 w-12 h-12 text-[var(--accent)] opacity-60"
@@ -182,7 +194,7 @@ function Hero() {
               strokeLinecap="round"
             />
           </svg>
-        </div>
+        </Stagger>
       </div>
     </section>
   );
@@ -191,32 +203,28 @@ function Hero() {
 function PhotoTile({
   src,
   alt,
-  position,
   tag,
   tagColor,
 }: {
   src: string;
   alt: string;
-  position: string;
   tag: string;
   tagColor: string;
 }) {
   return (
-    <div className={position}>
-      <div className="relative w-full h-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          className="w-full h-full object-cover rounded-2xl shadow-lg ring-1 ring-black/5"
-        />
-        <span
-          className={`absolute -bottom-2.5 left-1/2 -translate-x-1/2 ${tagColor} text-gray-900 px-3 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap shadow-sm ring-1 ring-black/5`}
-        >
-          {tag}
-        </span>
-      </div>
+    <div className="relative w-full h-full">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className="w-full h-full object-cover rounded-2xl shadow-lg ring-1 ring-black/5"
+      />
+      <span
+        className={`absolute -bottom-2.5 left-1/2 -translate-x-1/2 ${tagColor} text-gray-900 px-3 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap shadow-sm ring-1 ring-black/5`}
+      >
+        {tag}
+      </span>
     </div>
   );
 }
@@ -267,9 +275,11 @@ function IconTile({
 function HowItWorks() {
   return (
     <section className="w-full max-w-5xl px-6 py-20 sm:py-28">
-      <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center mb-14 sm:mb-16">
-        How New Here works
-      </h2>
+      <Reveal>
+        <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center mb-14 sm:mb-16">
+          How New Here works
+        </h2>
+      </Reveal>
 
       <div className="relative">
         {/* Hand-drawn connecting curves — desktop only. Approximate
@@ -316,32 +326,41 @@ function HowItWorks() {
           />
         </svg>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-x-20">
-          <PhaseCard
-            position="lg:row-start-1 lg:col-start-1"
-            emoji="📍"
-            label="Week 1"
-            title="Land & settle"
-            body="The essentials, ordered for your city — driver's license, transit pass, a grocery store that becomes your grocery store."
-            ctaText="See Week 1"
-          />
-          <PhaseCard
-            position="lg:row-start-1 lg:col-start-2 lg:mt-24"
-            emoji="🎯"
-            label="Month 1"
-            title="Try things"
-            body="Real local clubs, classes, and communities that match what you're into. Mark the ones that stick; we drop the rest."
-            ctaText="See Month 1"
-          />
-          <PhaseCard
-            position="lg:row-start-2 lg:col-span-2 lg:max-w-md lg:mx-auto lg:mt-8"
-            emoji="💛"
-            label="Quarter 1"
-            title="Make it yours"
-            body="Your keepers from Month 1 become weekly anchors. Your anchors become a routine. Your routine becomes a life that fits this place."
-            ctaText="See your routine"
-          />
-        </div>
+        <Stagger className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-x-20">
+          <StaggerItem className="lg:row-start-1 lg:col-start-1">
+            <Pressable>
+              <PhaseCard
+                emoji="📍"
+                label="Week 1"
+                title="Land & settle"
+                body="The essentials, ordered for your city — driver's license, transit pass, a grocery store that becomes your grocery store."
+                ctaText="See Week 1"
+              />
+            </Pressable>
+          </StaggerItem>
+          <StaggerItem className="lg:row-start-1 lg:col-start-2 lg:mt-24">
+            <Pressable>
+              <PhaseCard
+                emoji="🎯"
+                label="Month 1"
+                title="Try things"
+                body="Real local clubs, classes, and communities that match what you're into. Mark the ones that stick; we drop the rest."
+                ctaText="See Month 1"
+              />
+            </Pressable>
+          </StaggerItem>
+          <StaggerItem className="lg:row-start-2 lg:col-span-2 lg:max-w-md lg:mx-auto lg:mt-8">
+            <Pressable>
+              <PhaseCard
+                emoji="💛"
+                label="Quarter 1"
+                title="Make it yours"
+                body="Your keepers from Month 1 become weekly anchors. Your anchors become a routine. Your routine becomes a life that fits this place."
+                ctaText="See your routine"
+              />
+            </Pressable>
+          </StaggerItem>
+        </Stagger>
 
         {/* Hand-drawn-style annotation in the bottom-left corner */}
         <div className="hidden lg:flex absolute -bottom-4 left-2 items-center gap-3 text-orange-500 max-w-[200px]">
@@ -404,14 +423,12 @@ function HowItWorks() {
 }
 
 function PhaseCard({
-  position,
   emoji,
   label,
   title,
   body,
   ctaText,
 }: {
-  position: string;
   emoji: string;
   label: string;
   title: string;
@@ -419,9 +436,7 @@ function PhaseCard({
   ctaText: string;
 }) {
   return (
-    <div
-      className={`relative bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm ${position}`}
-    >
+    <div className="relative bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm cursor-pointer h-full">
       <div className="flex items-start gap-4">
         <div className="text-3xl flex-shrink-0 leading-none" aria-hidden>
           {emoji}
@@ -452,11 +467,12 @@ function PhaseCard({
 function SamplePreview() {
   return (
     <section className="w-full max-w-4xl px-6 pb-20">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-3">
-        A sample task in your plan
-      </p>
-      <div className="grid lg:grid-cols-[1fr_auto] gap-6 items-start">
-        <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm relative overflow-hidden">
+      <Reveal>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted-foreground)] mb-3">
+          A sample task in your plan
+        </p>
+        <div className="grid lg:grid-cols-[1fr_auto] gap-6 items-start">
+          <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm relative overflow-hidden">
           <div
             className="pointer-events-none absolute -top-8 -right-8 w-28 h-28 rounded-full bg-yellow-200/40"
             aria-hidden
@@ -495,6 +511,7 @@ function SamplePreview() {
           keep.
         </p>
       </div>
+      </Reveal>
     </section>
   );
 }
@@ -529,7 +546,7 @@ function ClosingCTA() {
         </p>
       </div>
 
-      <div className="relative rounded-3xl bg-white shadow-xl overflow-hidden py-20 sm:py-24 px-6 border border-gray-100">
+      <Reveal className="relative rounded-3xl bg-white shadow-xl overflow-hidden py-20 sm:py-24 px-6 border border-gray-100">
         {/* Pink corner blob — top-left */}
         <div
           className="absolute -top-20 -left-16 w-56 h-56 bg-pink-300/60 rounded-full"
@@ -546,19 +563,19 @@ function ClosingCTA() {
           <FloatingPhoto
             src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=200&h=200&fit=crop&auto=format&q=80"
             alt="Friends laughing"
-            position="absolute left-8 lg:left-16 top-16 w-24 h-24 lg:w-28 lg:h-28"
+            position="absolute left-8 lg:left-16 top-16 w-24 h-24 lg:w-28 lg:h-28 animate-float-slow"
             ringColor="ring-pink-300"
           />
           <FloatingPhoto
             src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=200&h=200&fit=crop&auto=format&q=80"
             alt="Group of runners"
-            position="absolute right-8 lg:right-16 top-16 w-24 h-24 lg:w-28 lg:h-28"
+            position="absolute right-8 lg:right-16 top-16 w-24 h-24 lg:w-28 lg:h-28 animate-float-slow-delayed"
             ringColor="ring-purple-300"
           />
           <FloatingPhoto
             src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=200&h=200&fit=crop&auto=format&q=80"
             alt="Coffee shop"
-            position="absolute right-8 lg:right-24 bottom-12 w-24 h-24 lg:w-28 lg:h-28"
+            position="absolute right-8 lg:right-24 bottom-12 w-24 h-24 lg:w-28 lg:h-28 animate-float-slow"
             ringColor="ring-emerald-300"
           />
 
@@ -591,14 +608,16 @@ function ClosingCTA() {
             Tell us where you&apos;re moving, when, and what you care about.
             We&apos;ll build your personalized plan in under a minute.
           </p>
-          <Link
-            href="/onboarding"
-            className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-gray-900 text-white px-8 text-base font-medium hover:bg-gray-800 transition shadow-sm"
-          >
-            Get my plan →
-          </Link>
+          <Pressable className="mt-8 inline-block">
+            <Link
+              href="/onboarding"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-gray-900 text-white px-8 text-base font-medium hover:bg-gray-800 transition shadow-sm"
+            >
+              Get my plan →
+            </Link>
+          </Pressable>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

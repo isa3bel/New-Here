@@ -1,3 +1,6 @@
+"use client";
+
+import { Reveal, Stagger, StaggerItem } from "@/app/_components/motion";
 import { daysSinceMove } from "@/lib/plan-progress";
 import type { Task } from "@/lib/types";
 
@@ -69,44 +72,48 @@ export function YourWeek({ tasks, anchors, moveDate, currentDay }: Props) {
   const headerSuffix = isPreMove ? "Your move week" : "This week";
 
   return (
-    <section className="mt-10">
-      <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
-        <h2 className="text-xl font-semibold">Your week</h2>
-        <span className="text-xs text-[var(--muted-foreground)]">
-          {headerSuffix} · {monthRange(days[0].date, days[6].date)}
-        </span>
-      </div>
-      <p className="text-sm text-[var(--muted-foreground)] mb-4">
-        {isPreMove
-          ? "Here's what your first week in the new city looks like."
-          : "What this week looks like — what's scheduled, plus the things you've made part of your routine."}
-      </p>
-
-      <div className="-mx-2 overflow-x-auto pb-2">
-        <div className="px-2 grid grid-cols-7 gap-2 min-w-[42rem]">
-          {days.map((day) => (
-            <DayColumn key={day.date.toISOString()} {...day} />
-          ))}
+    <Reveal>
+      <section className="mt-10">
+        <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
+          <h2 className="text-xl font-semibold">Your week</h2>
+          <span className="text-xs text-[var(--muted-foreground)]">
+            {headerSuffix} · {monthRange(days[0].date, days[6].date)}
+          </span>
         </div>
-      </div>
+        <p className="text-sm text-[var(--muted-foreground)] mb-4">
+          {isPreMove
+            ? "Here's what your first week in the new city looks like."
+            : "What this week looks like — what's scheduled, plus the things you've made part of your routine."}
+        </p>
 
-      {anchors.length > 0 && (
-        <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">
-            Every week
-          </p>
-          <ul className="flex flex-wrap gap-1.5">
-            {anchors.map((anchor) => (
-              <AnchorPill
-                key={anchor.id}
-                taskId={anchor.id}
-                title={anchor.title}
-              />
+        <div className="-mx-2 overflow-x-auto pb-2">
+          <Stagger className="px-2 grid grid-cols-7 gap-2 min-w-[42rem]">
+            {days.map((day) => (
+              <StaggerItem key={day.date.toISOString()}>
+                <DayColumn {...day} />
+              </StaggerItem>
             ))}
-          </ul>
+          </Stagger>
         </div>
-      )}
-    </section>
+
+        {anchors.length > 0 && (
+          <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">
+              Every week
+            </p>
+            <Stagger as="ul" className="flex flex-wrap gap-1.5">
+              {anchors.map((anchor) => (
+                <AnchorPill
+                  key={anchor.id}
+                  taskId={anchor.id}
+                  title={anchor.title}
+                />
+              ))}
+            </Stagger>
+          </div>
+        )}
+      </section>
+    </Reveal>
   );
 }
 

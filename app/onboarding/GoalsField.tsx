@@ -2,6 +2,8 @@
 
 import { useState, type KeyboardEvent } from "react";
 
+import { AnimatePresence, motion, useReducedMotion } from "@/app/_components/motion";
+
 type Props = {
   name: string;
   predefined: readonly string[];
@@ -26,6 +28,7 @@ export function GoalsField({ name, predefined, defaultSelected }: Props) {
   const [custom, setCustom] = useState<string[]>(initialCustom);
   const [selected, setSelected] = useState<Set<string>>(new Set(capped));
   const [inputValue, setInputValue] = useState("");
+  const reduceMotion = useReducedMotion();
 
   const atMax = selected.size >= MAX_GOALS;
 
@@ -92,50 +95,57 @@ export function GoalsField({ name, predefined, defaultSelected }: Props) {
   return (
     <div>
       <div className="flex flex-wrap gap-2 items-center">
-        {allTags.map((tag) => {
-          const isSelected = selected.has(tag);
-          const isCustom = !predefinedSet.has(tag);
-          const blocked = !isSelected && atMax;
-          return (
-            <span
-              key={tag}
-              className={`inline-flex items-center rounded-full border text-sm transition ${
-                isSelected
-                  ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-foreground)]"
-                  : blocked
-                    ? "border-[var(--border)] bg-[var(--card)] opacity-40"
-                    : "border-[var(--border)] bg-[var(--card)]"
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => toggle(tag)}
-                disabled={blocked}
-                aria-disabled={blocked}
-                title={blocked ? `Pick at most ${MAX_GOALS}` : undefined}
-                className={`px-3 py-1.5 ${
-                  blocked ? "cursor-not-allowed" : "cursor-pointer"
+        <AnimatePresence initial={false}>
+          {allTags.map((tag) => {
+            const isSelected = selected.has(tag);
+            const isCustom = !predefinedSet.has(tag);
+            const blocked = !isSelected && atMax;
+            return (
+              <motion.span
+                key={tag}
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: isSelected ? 1.05 : 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2 }}
+                className={`inline-flex items-center rounded-full border text-sm transition-colors ${
+                  isSelected
+                    ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-foreground)]"
+                    : blocked
+                      ? "border-[var(--border)] bg-[var(--card)] opacity-40"
+                      : "border-[var(--border)] bg-[var(--card)]"
                 }`}
               >
-                {tag}
-              </button>
-              {isCustom && (
                 <button
                   type="button"
-                  onClick={() => removeCustom(tag)}
-                  aria-label={`Remove ${tag}`}
-                  className={`pr-2.5 pl-0 leading-none cursor-pointer ${
-                    isSelected
-                      ? "opacity-80 hover:opacity-100"
-                      : "opacity-60 hover:opacity-100"
+                  onClick={() => toggle(tag)}
+                  disabled={blocked}
+                  aria-disabled={blocked}
+                  title={blocked ? `Pick at most ${MAX_GOALS}` : undefined}
+                  className={`px-3 py-1.5 ${
+                    blocked ? "cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >
-                  ×
+                  {tag}
                 </button>
-              )}
-            </span>
-          );
-        })}
+                {isCustom && (
+                  <button
+                    type="button"
+                    onClick={() => removeCustom(tag)}
+                    aria-label={`Remove ${tag}`}
+                    className={`pr-2.5 pl-0 leading-none cursor-pointer ${
+                      isSelected
+                        ? "opacity-80 hover:opacity-100"
+                        : "opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    ×
+                  </button>
+                )}
+              </motion.span>
+            );
+          })}
+        </AnimatePresence>
 
         <input
           type="text"
@@ -144,7 +154,7 @@ export function GoalsField({ name, predefined, defaultSelected }: Props) {
           onKeyDown={handleKeyDown}
           placeholder={atMax ? `Limit ${MAX_GOALS} reached` : "Add your own…"}
           disabled={atMax}
-          className="rounded-full border border-dashed border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-sm outline-none focus:border-[var(--accent)] min-w-[160px] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-full border border-dashed border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-sm outline-none transition-colors focus:border-[var(--accent)] min-w-[160px] disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Add a custom goal. Press Enter or Tab to add."
         />
       </div>

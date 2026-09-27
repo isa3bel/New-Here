@@ -2,6 +2,11 @@
 
 import { useTransition } from "react";
 
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+} from "@/app/_components/motion";
 import { refreshAiSuggestionsAction } from "@/app/actions";
 
 type Props = {
@@ -18,31 +23,42 @@ type Props = {
 // notice as "still working" during the 15–30s AI call.
 export function RefreshSuggestionsButton({ surface }: Props) {
   const [pending, startTransition] = useTransition();
-
-  if (pending) {
-    return (
-      <span
-        role="status"
-        aria-live="polite"
-        className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)]/10 px-3 py-1 text-xs font-medium text-[var(--accent)]"
-      >
-        <Spinner />
-        <span>Refreshing… (up to 30s)</span>
-      </span>
-    );
-  }
+  const reduce = useReducedMotion();
 
   return (
-    <button
-      type="button"
-      onClick={() =>
-        startTransition(() => refreshAiSuggestionsAction({ surface }))
-      }
-      className="text-xs text-[var(--muted-foreground)] hover:text-[var(--accent)] hover:underline"
-      aria-label="Refresh suggestions"
-    >
-      ↻ Refresh
-    </button>
+    <AnimatePresence mode="wait" initial={false}>
+      {pending ? (
+        <motion.span
+          key="pending"
+          role="status"
+          aria-live="polite"
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduce ? undefined : { opacity: 0 }}
+          transition={{ duration: reduce ? 0 : 0.15 }}
+          className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)]/10 px-3 py-1 text-xs font-medium text-[var(--accent)]"
+        >
+          <Spinner />
+          <span>Refreshing… (up to 30s)</span>
+        </motion.span>
+      ) : (
+        <motion.button
+          key="idle"
+          type="button"
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduce ? undefined : { opacity: 0 }}
+          transition={{ duration: reduce ? 0 : 0.15 }}
+          onClick={() =>
+            startTransition(() => refreshAiSuggestionsAction({ surface }))
+          }
+          className="text-xs text-[var(--muted-foreground)] hover:text-[var(--accent)] hover:underline"
+          aria-label="Refresh suggestions"
+        >
+          ↻ Refresh
+        </motion.button>
+      )}
+    </AnimatePresence>
   );
 }
 

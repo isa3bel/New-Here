@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Reveal } from "@/app/_components/motion";
 import { dismissCelebrationAction } from "@/app/actions";
 
 import { AiFailureBanner } from "./AiFailureBanner";
@@ -153,20 +154,22 @@ export default async function PlanPage() {
           <CityBanner city={profile?.city ?? null} />
         </div>
 
-        <header>
-          <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
-            Your plan
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mt-2">
-            {profile?.city ?? "Your new city"}
-          </h1>
-          <p className="mt-1 text-[var(--muted-foreground)]">
-            <span className="font-medium text-[var(--foreground)]">
-              {summary.headline}
-            </span>{" "}
-            · {summary.detail}
-          </p>
-        </header>
+        <Reveal y={12}>
+          <header>
+            <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
+              Your plan
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mt-2">
+              {profile?.city ?? "Your new city"}
+            </h1>
+            <p className="mt-1 text-[var(--muted-foreground)]">
+              <span className="font-medium text-[var(--foreground)]">
+                {summary.headline}
+              </span>{" "}
+              · {summary.detail}
+            </p>
+          </header>
+        </Reveal>
 
         {atDailyLimit ? (
           <DailyLimitBanner
@@ -203,38 +206,40 @@ export default async function PlanPage() {
 
 function CelebrationBanner({ badges }: { badges: Badge[] }) {
   return (
-    <div className="mt-6 rounded-2xl border-2 border-[var(--accent)] bg-[var(--card)] p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
-            {badges.length === 1 ? "Badge earned" : "Badges earned"}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {badges.map((b) => (
-              <div key={b.id} className="flex items-center gap-2">
-                <span className="text-2xl" aria-hidden>
-                  {b.icon ?? "🏅"}
-                </span>
-                <div>
-                  <div className="font-semibold">{b.name}</div>
-                  <div className="text-sm text-[var(--muted-foreground)]">
-                    {b.description}
+    <Reveal>
+      <div className="mt-6 rounded-2xl border-2 border-[var(--accent)] bg-[var(--card)] p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
+              {badges.length === 1 ? "Badge earned" : "Badges earned"}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-3">
+              {badges.map((b) => (
+                <div key={b.id} className="flex items-center gap-2">
+                  <span className="text-2xl" aria-hidden>
+                    {b.icon ?? "🏅"}
+                  </span>
+                  <div>
+                    <div className="font-semibold">{b.name}</div>
+                    <div className="text-sm text-[var(--muted-foreground)]">
+                      {b.description}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+          <form action={dismissCelebrationAction}>
+            <button
+              type="submit"
+              aria-label="Dismiss"
+              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xl leading-none transition-colors duration-200"
+            >
+              ×
+            </button>
+          </form>
         </div>
-        <form action={dismissCelebrationAction}>
-          <button
-            type="submit"
-            aria-label="Dismiss"
-            className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xl leading-none"
-          >
-            ×
-          </button>
-        </form>
       </div>
-    </div>
+    </Reveal>
   );
 }

@@ -2,6 +2,12 @@
 
 import { useEffect, useState, useTransition } from "react";
 
+import {
+  AnimatePresence,
+  motion,
+  Pressable,
+  useReducedMotion,
+} from "@/app/_components/motion";
 import { markForYouCompletedAction } from "@/app/actions";
 import { uniqByUrl } from "@/lib/ai/sanitize";
 import type { AiMonth1Tile } from "@/lib/ai/types";
@@ -37,6 +43,7 @@ export function Month1AiTile({
   const [expanded, setExpanded] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
   const [feedback, setFeedback] = useState<"done" | null>(null);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     if (!feedback) return;
@@ -66,12 +73,13 @@ export function Month1AiTile({
   };
 
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden flex flex-col">
+    <Pressable className="h-full">
+    <article className="h-full rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden flex flex-col">
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
-        className="w-full text-left p-4 flex items-start gap-3 hover:bg-[var(--background)] transition"
+        className="w-full text-left p-4 flex items-start gap-3 hover:bg-[var(--background)] transition-colors duration-200"
       >
         <div
           className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-[var(--muted)] overflow-hidden"
@@ -99,12 +107,7 @@ export function Month1AiTile({
             <h4 className="font-medium text-sm leading-tight">
               {tile.title}
             </h4>
-            <span
-              className="text-xs text-[var(--muted-foreground)] flex-shrink-0"
-              aria-hidden
-            >
-              {expanded ? "▴" : "▾"}
-            </span>
+            <Chevron expanded={expanded} />
           </div>
           <p className="mt-1 text-xs text-[var(--muted-foreground)] leading-snug">
             {tile.shortDescription}
@@ -118,49 +121,60 @@ export function Month1AiTile({
         </div>
       </button>
 
-      {expanded && (
-        <div className="px-4 pb-4 -mt-1 border-t border-[var(--border)] bg-[var(--background)]/50">
-          <p className="mt-3 text-sm leading-relaxed">{tile.longDescription}</p>
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="expanded"
+            initial={reduce ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={reduce ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: reduce ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 -mt-1 border-t border-[var(--border)] bg-[var(--background)]/50">
+              <p className="mt-3 text-sm leading-relaxed">{tile.longDescription}</p>
 
-          {(tile.meta?.cost ||
-            tile.meta?.schedule ||
-            tile.meta?.location ||
-            tile.meta?.howToJoin) && (
-            <ul className="mt-3 space-y-1.5 text-xs text-[var(--muted-foreground)]">
-              {tile.meta?.cost && (
-                <MetaLine label="Cost" value={tile.meta.cost} />
+              {(tile.meta?.cost ||
+                tile.meta?.schedule ||
+                tile.meta?.location ||
+                tile.meta?.howToJoin) && (
+                <ul className="mt-3 space-y-1.5 text-xs text-[var(--muted-foreground)]">
+                  {tile.meta?.cost && (
+                    <MetaLine label="Cost" value={tile.meta.cost} />
+                  )}
+                  {tile.meta?.schedule && (
+                    <MetaLine label="When" value={tile.meta.schedule} />
+                  )}
+                  {tile.meta?.location && (
+                    <MetaLine label="Where" value={tile.meta.location} />
+                  )}
+                  {tile.meta?.howToJoin && (
+                    <MetaLine label="How to join" value={tile.meta.howToJoin} />
+                  )}
+                </ul>
               )}
-              {tile.meta?.schedule && (
-                <MetaLine label="When" value={tile.meta.schedule} />
-              )}
-              {tile.meta?.location && (
-                <MetaLine label="Where" value={tile.meta.location} />
-              )}
-              {tile.meta?.howToJoin && (
-                <MetaLine label="How to join" value={tile.meta.howToJoin} />
-              )}
-            </ul>
-          )}
 
-          {tile.links.length > 0 && (
-            <ul className="mt-3 space-y-1.5">
-              {uniqByUrl(tile.links).map((l) => (
-                <li key={l.url}>
-                  <a
-                    href={l.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-sm text-[var(--accent)] hover:underline"
-                  >
-                    {l.label} →
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+              {tile.links.length > 0 && (
+                <ul className="mt-3 space-y-1.5">
+                  {uniqByUrl(tile.links).map((l) => (
+                    <li key={l.url}>
+                      <a
+                        href={l.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-sm text-[var(--accent)] hover:underline"
+                      >
+                        {l.label} →
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {!completed && (
         <div className="px-4 py-3 border-t border-[var(--border)] flex items-center gap-2">
@@ -168,30 +182,84 @@ export function Month1AiTile({
             type="button"
             onClick={handleDone}
             disabled={pending}
-            className="text-xs h-7 px-2.5 rounded-full border border-[var(--border)] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition disabled:opacity-60"
+            className="text-xs h-7 px-2.5 inline-flex items-center gap-1 rounded-full border border-[var(--border)] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors duration-200 disabled:opacity-60"
           >
-            ✓ done
+            <CheckIcon className="h-3 w-3" />
+            done
           </button>
         </div>
       )}
 
       {completed && (
-        <div className="px-4 py-3 border-t border-[var(--border)] space-y-2">
-          <span className="text-xs px-2.5 h-7 inline-flex items-center rounded-full bg-[var(--accent)] text-[var(--accent-foreground)] font-medium">
-            ✓ Done
+        <motion.div
+          initial={reduce ? false : { opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: reduce ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="px-4 py-3 border-t border-[var(--border)] space-y-2"
+        >
+          <span className="text-xs px-2.5 h-7 inline-flex items-center gap-1 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)] font-medium">
+            <CheckIcon className="h-3 w-3" />
+            Done
           </span>
           {taskId && (
             <KeeperPrompt taskId={taskId} state={keeperState ?? "none"} />
           )}
-        </div>
+        </motion.div>
       )}
 
-      {feedback && (
-        <div className="px-4 py-2 border-t border-[var(--border)] bg-[var(--background)] text-xs text-[var(--muted-foreground)]">
-          Marked done — entry recorded.
-        </div>
-      )}
+      <AnimatePresence>
+        {feedback && (
+          <motion.div
+            key="feedback"
+            initial={reduce ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={reduce ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: reduce ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 py-2 border-t border-[var(--border)] bg-[var(--background)] text-xs text-[var(--muted-foreground)]">
+              Marked done — entry recorded.
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </article>
+    </Pressable>
+  );
+}
+
+// Small chevron that rotates 180° on expand instead of swapping glyphs.
+function Chevron({ expanded }: { expanded: boolean }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-3.5 w-3.5 flex-shrink-0 text-[var(--muted-foreground)] mt-0.5"
+      aria-hidden
+      animate={{ rotate: expanded ? 180 : 0 }}
+      transition={{ duration: reduce ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <path d="M5 7.5l5 5 5-5" />
+    </motion.svg>
+  );
+}
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
+      <path
+        d="M4.5 10.5l3.8 3.8L15.5 6"
+        stroke="currentColor"
+        strokeWidth={2.4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 

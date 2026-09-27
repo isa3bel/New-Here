@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { getProfile } from "@/lib/db";
 
-import { Sidebar } from "./Sidebar";
+import { MobileTabBar, Sidebar } from "./Sidebar";
 
 export default async function AppLayout({
   children,
@@ -22,24 +22,16 @@ export default async function AppLayout({
     <div className="flex flex-1 flex-col lg:flex-row">
       <Sidebar />
 
-      {/* Mobile-only top nav: shows the two app sections horizontally */}
-      <div className="lg:hidden border-b border-[var(--border)] bg-[var(--card)] px-4 py-3 flex items-center gap-4 overflow-x-auto">
-        <Link href="/" className="font-semibold whitespace-nowrap">
+      {/* Mobile-only top bar: brand mark, sticky rather than fixed */}
+      <div className="lg:hidden sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--card)]/95 backdrop-blur-sm px-4 py-3">
+        <Link href="/" className="font-semibold text-sm">
           🌿 New Here
-        </Link>
-        <span className="text-[var(--border)]">·</span>
-        <Link href="/plan" className="text-sm whitespace-nowrap">
-          New Here Plan
-        </Link>
-        <Link href="/profile" className="text-sm whitespace-nowrap">
-          Profile
-        </Link>
-        <Link href="/feedback" className="text-sm whitespace-nowrap">
-          Feedback
         </Link>
       </div>
 
-      <div className="flex-1 min-w-0">{children}</div>
+      <div className="flex-1 min-w-0 pb-20 lg:pb-0">{children}</div>
+
+      <MobileTabBar />
     </div>
   );
 }

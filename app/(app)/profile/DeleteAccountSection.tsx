@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { deleteAccountAction } from "@/app/actions";
+import { AnimatePresence, motion } from "@/app/_components/motion";
 
 // "Danger zone" with a two-step confirm: user has to type DELETE into a
 // box to enable the destructive button. Prevents accidents.
@@ -30,7 +31,7 @@ export function DeleteAccountSection() {
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
             placeholder="DELETE"
-            className="w-full max-w-xs h-10 rounded-lg border border-red-300 bg-white px-3 outline-none focus:border-red-500 text-sm"
+            className="w-full max-w-xs h-10 rounded-lg border border-red-300 bg-white px-3 outline-none transition-colors focus:border-red-500 text-sm"
           />
         </label>
 
@@ -38,9 +39,19 @@ export function DeleteAccountSection() {
           type="button"
           disabled={!enabled || pending}
           onClick={() => startTransition(() => deleteAccountAction())}
-          className="mt-3 inline-flex h-10 items-center rounded-full bg-red-600 px-5 text-sm font-medium text-white hover:bg-red-700 transition disabled:opacity-40 disabled:cursor-not-allowed"
+          className="mt-3 inline-flex h-10 items-center rounded-full bg-red-600 px-5 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
-          {pending ? "Deleting…" : "Permanently delete my account"}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={pending ? "pending" : "idle"}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              {pending ? "Deleting…" : "Permanently delete my account"}
+            </motion.span>
+          </AnimatePresence>
         </button>
       </div>
     </section>

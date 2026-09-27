@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 
+import {
+  AnimatePresence,
+  motion,
+  Pressable,
+  useReducedMotion,
+} from "@/app/_components/motion";
 import { toggleTaskAction } from "@/app/actions";
 import type { Task, TaskCategory } from "@/lib/types";
 
@@ -129,10 +135,12 @@ export function Month1Tile({ task, isToday }: Props) {
   const meta = metaFor(task);
   const done = task.status === "done";
   const nextStatus = done ? "pending" : "done";
+  const reduce = useReducedMotion();
 
   return (
+    <Pressable className="h-full">
     <div
-      className={`rounded-2xl border bg-[var(--card)] transition cursor-pointer ${
+      className={`h-full rounded-2xl border bg-[var(--card)] transition-colors duration-200 cursor-pointer ${
         expanded
           ? "border-[var(--accent)] ring-1 ring-[var(--accent)]"
           : "border-[var(--border)] hover:border-[var(--accent)]"
@@ -174,77 +182,89 @@ export function Month1Tile({ task, isToday }: Props) {
       </div>
 
       {/* Expanded section */}
-      {expanded && (
-        <div
-          className="border-t border-[var(--border)] p-4 space-y-4"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {task.description && (
-            <p className="text-sm text-[var(--muted-foreground)]">
-              {task.description}
-            </p>
-          )}
-
-          {/* Logistics section — placeholder for what AI + web search will fill */}
-          <div className="rounded-xl bg-[var(--background)] border border-[var(--border)] p-3 space-y-2">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
-              Logistics
-            </p>
-            <LogisticsRow label="When" value={`Day ${task.dayOffset + 1}`} />
-            {meta.howToJoin && (
-              <LogisticsRow label="How to join" value={meta.howToJoin} />
-            )}
-            {meta.openTimes && (
-              <LogisticsRow label="Open times" value={meta.openTimes} />
-            )}
-            {meta.cost && <LogisticsRow label="Cost" value={meta.cost} />}
-            {task.linkUrl && (
-              <LogisticsRow
-                label="Link"
-                value={
-                  <a
-                    href={task.linkUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[var(--accent)] hover:underline break-all"
-                  >
-                    {task.linkUrl}
-                  </a>
-                }
-              />
-            )}
-            <p className="text-[10px] text-[var(--muted-foreground)] italic pt-2">
-              Once AI + web search is wired up, the specifics here become
-              real (live hours, addresses, links) keyed to your city.
-            </p>
-          </div>
-
-          {/* Mark done */}
-          <form
-            action={toggleTaskAction}
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-3"
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="expanded"
+            initial={reduce ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={reduce ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: reduce ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
           >
-            <input type="hidden" name="taskId" value={task.id} />
-            <input type="hidden" name="nextStatus" value={nextStatus} />
-            <button
-              type="submit"
-              className={`inline-flex h-9 items-center gap-2 rounded-full px-4 text-sm font-medium transition ${
-                done
-                  ? "border border-[var(--border)] hover:border-[var(--accent)]"
-                  : "bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
-              }`}
+            <div
+              className="border-t border-[var(--border)] p-4 space-y-4"
+              onClick={(e) => e.stopPropagation()}
             >
-              {done ? "Mark as not done" : "Mark as done"}
-            </button>
-          </form>
+              {task.description && (
+                <p className="text-sm text-[var(--muted-foreground)]">
+                  {task.description}
+                </p>
+              )}
 
-          {done && (task.isRecurringActivity || task.isEventAttendance) && (
-            <KeeperPrompt taskId={task.id} state={task.keeperState} />
-          )}
-        </div>
-      )}
+              {/* Logistics section — placeholder for what AI + web search will fill */}
+              <div className="rounded-xl bg-[var(--background)] border border-[var(--border)] p-3 space-y-2">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+                  Logistics
+                </p>
+                <LogisticsRow label="When" value={`Day ${task.dayOffset + 1}`} />
+                {meta.howToJoin && (
+                  <LogisticsRow label="How to join" value={meta.howToJoin} />
+                )}
+                {meta.openTimes && (
+                  <LogisticsRow label="Open times" value={meta.openTimes} />
+                )}
+                {meta.cost && <LogisticsRow label="Cost" value={meta.cost} />}
+                {task.linkUrl && (
+                  <LogisticsRow
+                    label="Link"
+                    value={
+                      <a
+                        href={task.linkUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--accent)] hover:underline break-all"
+                      >
+                        {task.linkUrl}
+                      </a>
+                    }
+                  />
+                )}
+                <p className="text-[10px] text-[var(--muted-foreground)] italic pt-2">
+                  Once AI + web search is wired up, the specifics here become
+                  real (live hours, addresses, links) keyed to your city.
+                </p>
+              </div>
+
+              {/* Mark done */}
+              <form
+                action={toggleTaskAction}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-3"
+              >
+                <input type="hidden" name="taskId" value={task.id} />
+                <input type="hidden" name="nextStatus" value={nextStatus} />
+                <button
+                  type="submit"
+                  className={`inline-flex h-9 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors duration-200 ${
+                    done
+                      ? "border border-[var(--border)] hover:border-[var(--accent)]"
+                      : "bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
+                  }`}
+                >
+                  {done ? "Mark as not done" : "Mark as done"}
+                </button>
+              </form>
+
+              {done && (task.isRecurringActivity || task.isEventAttendance) && (
+                <KeeperPrompt taskId={task.id} state={task.keeperState} />
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+    </Pressable>
   );
 }
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Reveal } from "@/app/_components/motion";
 import { BadgeShelf } from "@/app/(app)/plan/BadgeShelf";
 import { CityBanner } from "@/app/(app)/plan/CityBanner";
 import { PlanView } from "@/app/(app)/plan/PlanView";
@@ -105,31 +106,33 @@ export default function SamplePage() {
       <div className="w-full max-w-6xl px-6 py-10">
         <CityBanner city={sampleCity} />
 
-        <header>
-          <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
-            Sample plan
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mt-2">
-            {sampleCity}
-          </h1>
-          <p className="mt-1 text-[var(--muted-foreground)]">
-            <span className="font-medium text-[var(--foreground)]">
-              {summary.headline}
-            </span>{" "}
-            · {summary.detail}
-          </p>
-        </header>
+        <Reveal>
+          <header>
+            <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
+              Sample plan
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mt-2">
+              {sampleCity}
+            </h1>
+            <p className="mt-1 text-[var(--muted-foreground)]">
+              <span className="font-medium text-[var(--foreground)]">
+                {summary.headline}
+              </span>{" "}
+              · {summary.detail}
+            </p>
+          </header>
 
-        <BadgeShelf
-          badges={mockBadges}
-          earnedIds={
-            new Set([
-              "b1", // First Step
-              "b3", // Showed Up
-              "b4", // Regular
-            ])
-          }
-        />
+          <BadgeShelf
+            badges={mockBadges}
+            earnedIds={
+              new Set([
+                "b1", // First Step
+                "b3", // Showed Up
+                "b4", // Regular
+              ])
+            }
+          />
+        </Reveal>
 
         <div className="mt-10">
           <PlanView

@@ -2,6 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  AnimatePresence,
+  motion,
+  Pressable,
+  Reveal,
+  Stagger,
+  StaggerItem,
+  useReducedMotion,
+} from "@/app/_components/motion";
 import { toggleTaskAction } from "@/app/actions";
 import { uniqByUrl } from "@/lib/ai/sanitize";
 import type { AiMonth1Tile, AiWeekOneDetail } from "@/lib/ai/types";
@@ -30,6 +39,23 @@ export type Month1Suggestion = {
 };
 
 const PHASE_ORDER: Phase[] = ["week_one", "month_one", "quarter_one"];
+
+// Matches the Stagger/StaggerItem easing + motion values in
+// app/_components/motion.tsx. Duplicated locally (rather than wrapping
+// with StaggerItem directly) wherever the animated element must stay a
+// real <li> inside a <ul> — StaggerItem renders a <div>, which isn't
+// valid list markup. Framer Motion propagates "hidden"/"show" variant
+// state from an ancestor motion component regardless of the DOM tag in
+// between, so a plain <div> (e.g. Stagger's own wrapper) can sit between
+// the <ul> and these <li> items without breaking the stagger.
+const LIST_ITEM_VARIANTS = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
 
 const CATEGORY_STYLES: Record<TaskCategory, string> = {
   essentials: "bg-slate-100 text-slate-800",
@@ -82,6 +108,7 @@ export function PlanView({
 }: Props) {
   const isPreMove = currentDay < 0;
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
 
   // Phases the user has manually collapsed. We seed it with any past
   // phases so they're hidden by default (e.g. once you're past Week 1,
@@ -166,69 +193,74 @@ export function PlanView({
     <div>
       <div className="w-full">
         {isPreMove ? (
-          <section className="mb-12">
-            <div className="flex items-baseline justify-between mb-1 gap-3">
-              <h2 className="text-xl font-semibold">Prepare for your move</h2>
-              <div className="flex items-center gap-3">
-                <RefreshSuggestionsButton surface="pre_move" />
-                <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-widest">
-                  Pre-move
-                </span>
-              </div>
-            </div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-4">
-              You&apos;re not in {city || "your new city"} yet — these are
-              communities, groups, and resources you can join or read up on
-              now. The day-by-day checklist starts the day you arrive.
-            </p>
-            {preMoveSuggestions.length > 0 ? (
-              <ul className="space-y-2">
-                {preMoveSuggestions.map((p) => (
-                  <PreMoveRow
-                    key={p.item.id}
-                    item={p.item}
-                    interest={p.interest}
-                    completed={p.completed}
-                  />
-                ))}
-              </ul>
-            ) : (
-              <div className="rounded-lg border border-dashed border-[var(--border)] p-4 text-sm text-[var(--muted-foreground)]">
-                Add interests in your profile and we&apos;ll surface communities
-                and resources here you can join or read before you arrive.
-              </div>
-            )}
-          </section>
-        ) : (
-          todaysFocus.length > 0 && (
+          <Reveal>
             <section className="mb-12">
-              <div className="flex items-baseline justify-between mb-1">
-                <h2 className="text-xl font-semibold">Today&apos;s focus</h2>
-                <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-widest">
-                  {todaysFocus.length === 1
-                    ? "1 task"
-                    : `${todaysFocus.length} tasks`}
-                </span>
+              <div className="flex items-baseline justify-between mb-1 gap-3">
+                <h2 className="text-xl font-semibold">Prepare for your move</h2>
+                <div className="flex items-center gap-3">
+                  <RefreshSuggestionsButton surface="pre_move" />
+                  <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-widest">
+                    Pre-move
+                  </span>
+                </div>
               </div>
               <p className="text-sm text-[var(--muted-foreground)] mb-4">
-                The next steps that matter most right now.
+                You&apos;re not in {city || "your new city"} yet — these are
+                communities, groups, and resources you can join or read up on
+                now. The day-by-day checklist starts the day you arrive.
               </p>
-              {/* items-stretch (the grid default) is intentional —
-                  every tile gets the same height as the tallest in its
-                  row regardless of description length. mt-auto inside
-                  FocusTile keeps the mark-done row pinned to the bottom. */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {todaysFocus.map((task) => (
-                  <FocusTile
-                    key={`focus-${task.id}`}
-                    task={task}
-                    aiDetail={overlayForTask(task)}
-                    isSelected={task.id === selectedId}
-                    onSelect={() => setSelectedId(task.id)}
-                  />
-                ))}
-              </div>
+              {preMoveSuggestions.length > 0 ? (
+                <Stagger as="ul" className="space-y-2">
+                  {preMoveSuggestions.map((p) => (
+                    <PreMoveRow
+                      key={p.item.id}
+                      item={p.item}
+                      interest={p.interest}
+                      completed={p.completed}
+                    />
+                  ))}
+                </Stagger>
+              ) : (
+                <div className="rounded-lg border border-dashed border-[var(--border)] p-4 text-sm text-[var(--muted-foreground)]">
+                  Add interests in your profile and we&apos;ll surface communities
+                  and resources here you can join or read before you arrive.
+                </div>
+              )}
             </section>
+          </Reveal>
+        ) : (
+          todaysFocus.length > 0 && (
+            <Reveal>
+              <section className="mb-12">
+                <div className="flex items-baseline justify-between mb-1">
+                  <h2 className="text-xl font-semibold">Today&apos;s focus</h2>
+                  <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-widest">
+                    {todaysFocus.length === 1
+                      ? "1 task"
+                      : `${todaysFocus.length} tasks`}
+                  </span>
+                </div>
+                <p className="text-sm text-[var(--muted-foreground)] mb-4">
+                  The next steps that matter most right now.
+                </p>
+                {/* items-stretch (the grid default) is intentional —
+                    every tile gets the same height as the tallest in its
+                    row regardless of description length. mt-auto inside
+                    FocusTile keeps the mark-done row pinned to the bottom. */}
+                <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {todaysFocus.map((task) => (
+                    <StaggerItem key={`focus-${task.id}`} className="h-full">
+                      <FocusTile
+                        task={task}
+                        aiDetail={overlayForTask(task)}
+                        isSelected={task.id === selectedId}
+                        onSelect={() => setSelectedId(task.id)}
+                      />
+                    </StaggerItem>
+                  ))}
+                </Stagger>
+              </section>
+            </Reveal>
           )
         )}
 
@@ -253,7 +285,8 @@ export function PlanView({
             const statusStyle = PHASE_STATUS_STYLES[status];
             const collapsed = collapsedPhases.has(phase);
             return (
-              <section key={phase}>
+              <Reveal key={phase}>
+              <section>
                 <button
                   type="button"
                   onClick={() => togglePhase(phase)}
@@ -308,7 +341,7 @@ export function PlanView({
                       currentAiTileIds={currentAiTileIds}
                     />
                   ) : (
-                    <ul className="space-y-3">
+                    <Stagger as="ul" className="space-y-3">
                       {phaseTasks.map((task) => (
                         <TaskRow
                           key={task.id}
@@ -320,42 +353,76 @@ export function PlanView({
                           focus={focusIds.has(task.id)}
                         />
                       ))}
-                    </ul>
+                    </Stagger>
                   ))}
               </section>
+              </Reveal>
             );
           })}
         </div>
       </div>
 
-      {selectedTask && (
-        <>
-          {/* Backdrop on all screen sizes — tap closes. The main
-              content stays full-width so its responsive grids never
-              reflow into a cramped column. */}
-          <div
-            className="fixed inset-0 z-40 bg-black/40"
-            onClick={() => setSelectedId(null)}
-            aria-hidden
-          />
-          {/* Mobile: bottom sheet. Desktop (lg+): right-side drawer
-              that slides over the main content. Either way the panel
-              is fixed-positioned and doesn't affect the layout of
-              what's behind it. */}
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-y-auto rounded-t-2xl bg-[var(--background)] shadow-xl lg:inset-x-auto lg:bottom-0 lg:top-0 lg:right-0 lg:max-h-none lg:w-[28rem] lg:rounded-none lg:rounded-l-2xl"
-          >
-            <TaskDetailPanel
-              task={selectedTask}
-              aiDetail={overlayForTask(selectedTask)}
-              onClose={() => setSelectedId(null)}
+      <AnimatePresence>
+        {selectedTask && (
+          <>
+            {/* Backdrop on all screen sizes — tap closes. The main
+                content stays full-width so its responsive grids never
+                reflow into a cramped column. */}
+            <motion.div
+              key="detail-backdrop"
+              className="fixed inset-0 z-40 bg-black/40"
+              onClick={() => setSelectedId(null)}
+              aria-hidden
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.2 }}
             />
-          </div>
-        </>
-      )}
+            {/* Mobile: bottom sheet. Desktop (lg+): right-side drawer
+                that slides over the main content. Either way the panel
+                is fixed-positioned and doesn't affect the layout of
+                what's behind it. */}
+            <motion.div
+              key="detail-panel"
+              role="dialog"
+              aria-modal="true"
+              className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-y-auto rounded-t-2xl bg-[var(--background)] shadow-xl lg:inset-x-auto lg:bottom-0 lg:top-0 lg:right-0 lg:max-h-none lg:w-[28rem] lg:rounded-none lg:rounded-l-2xl"
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
+              transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <TaskDetailPanel
+                task={selectedTask}
+                aiDetail={overlayForTask(selectedTask)}
+                onClose={() => setSelectedId(null)}
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+// Small stroke-drawn checkmark that animates in (path draw) the moment a
+// task flips to done, instead of just popping into existence. Falls back
+// to an instant, fully-drawn check under prefers-reduced-motion.
+function AnimatedCheck({ className }: { className?: string }) {
+  const reduce = useReducedMotion();
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
+      <motion.path
+        d="M4.5 10.5l3.8 3.8L15.5 6"
+        stroke="currentColor"
+        strokeWidth={2.4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={reduce ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+        animate={{ pathLength: 1, opacity: 1 }}
+        transition={{ duration: reduce ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+      />
+    </svg>
   );
 }
 
@@ -388,10 +455,11 @@ function FocusTile({
       : "border-[var(--accent)] bg-[var(--card)]";
 
   return (
-    <article
-      onClick={onSelect}
-      className={`relative rounded-2xl border p-4 cursor-pointer transition hover:border-[var(--accent)] flex flex-col gap-3 min-h-[160px] ${border}`}
-    >
+    <Pressable className="h-full">
+      <article
+        onClick={onSelect}
+        className={`relative h-full rounded-2xl border p-4 cursor-pointer transition-colors duration-200 hover:border-[var(--accent)] flex flex-col gap-3 min-h-[160px] ${border}`}
+      >
       {/* Top row: category + day */}
       <div className="flex items-center gap-1.5 flex-wrap">
         <span
@@ -437,26 +505,14 @@ function FocusTile({
               : "border-[var(--border)] hover:border-[var(--accent)]"
           }`}
         >
-          {done && (
-            <svg
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-4 w-4"
-              aria-hidden
-            >
-              <path
-                fillRule="evenodd"
-                d="M16.704 5.29a1 1 0 010 1.42l-7.5 7.5a1 1 0 01-1.42 0l-3.5-3.5a1 1 0 011.42-1.42L8.5 12.085l6.79-6.795a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          )}
+          {done && <AnimatedCheck className="h-4 w-4" />}
         </button>
         <span className="text-xs text-[var(--muted-foreground)]">
           {done ? "Done — tap to undo" : "Mark as done"}
         </span>
       </form>
-    </article>
+      </article>
+    </Pressable>
   );
 }
 
@@ -493,69 +549,60 @@ function TaskRow({
         : "border-[var(--border)] bg-[var(--card)]";
 
   return (
-    <li
-      className={`flex items-start gap-3 rounded-2xl border p-4 transition cursor-pointer hover:border-[var(--accent)] ${baseRing} ${muted ? "opacity-60" : ""}`}
-      onClick={onSelect}
-    >
-      <form action={toggleTaskAction} onClick={(e) => e.stopPropagation()}>
-        <input type="hidden" name="taskId" value={task.id} />
-        <input type="hidden" name="nextStatus" value={nextStatus} />
-        <button
-          type="submit"
-          aria-label={done ? "Mark as not done" : "Mark as done"}
-          className={`mt-0.5 h-6 w-6 rounded-full border-2 flex items-center justify-center transition ${
-            done
-              ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-foreground)]"
-              : "border-[var(--border)] hover:border-[var(--accent)]"
-          }`}
+    <motion.li variants={LIST_ITEM_VARIANTS} className="list-none">
+      <Pressable>
+        <div
+          className={`flex items-start gap-3 rounded-2xl border p-4 transition-colors duration-200 cursor-pointer hover:border-[var(--accent)] ${baseRing} ${muted ? "opacity-60" : ""}`}
+          onClick={onSelect}
         >
-          {done && (
-            <svg
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-4 w-4"
-              aria-hidden
+          <form action={toggleTaskAction} onClick={(e) => e.stopPropagation()}>
+            <input type="hidden" name="taskId" value={task.id} />
+            <input type="hidden" name="nextStatus" value={nextStatus} />
+            <button
+              type="submit"
+              aria-label={done ? "Mark as not done" : "Mark as done"}
+              className={`mt-0.5 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
+                done
+                  ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-foreground)]"
+                  : "border-[var(--border)] hover:border-[var(--accent)]"
+              }`}
             >
-              <path
-                fillRule="evenodd"
-                d="M16.704 5.29a1 1 0 010 1.42l-7.5 7.5a1 1 0 01-1.42 0l-3.5-3.5a1 1 0 011.42-1.42L8.5 12.085l6.79-6.795a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          )}
-        </button>
-      </form>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <h3
-            className={`font-medium ${done ? "line-through text-[var(--muted-foreground)]" : ""}`}
-          >
-            {displayTitle}
-          </h3>
-          <span
-            className={`text-xs px-2 py-0.5 rounded-full capitalize ${CATEGORY_STYLES[task.category]}`}
-          >
-            {task.category}
-          </span>
-          <span className="text-xs text-[var(--muted-foreground)]">
-            Day {task.dayOffset + 1}
-          </span>
-          {focus && !emphasis && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)]">
-              Today
-            </span>
-          )}
+              {done && <AnimatedCheck className="h-4 w-4" />}
+            </button>
+          </form>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3
+                className={`font-medium ${done ? "line-through text-[var(--muted-foreground)]" : ""}`}
+              >
+                {displayTitle}
+              </h3>
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full capitalize ${CATEGORY_STYLES[task.category]}`}
+              >
+                {task.category}
+              </span>
+              <span className="text-xs text-[var(--muted-foreground)]">
+                Day {task.dayOffset + 1}
+              </span>
+              {focus && !emphasis && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)]">
+                  Today
+                </span>
+              )}
+            </div>
+            {displayDescription && (
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                {displayDescription}
+              </p>
+            )}
+            {done && (task.isRecurringActivity || task.isEventAttendance) && (
+              <KeeperPrompt taskId={task.id} state={task.keeperState} />
+            )}
+          </div>
         </div>
-        {displayDescription && (
-          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-            {displayDescription}
-          </p>
-        )}
-        {done && (task.isRecurringActivity || task.isEventAttendance) && (
-          <KeeperPrompt taskId={task.id} state={task.keeperState} />
-        )}
-      </div>
-    </li>
+      </Pressable>
+    </motion.li>
   );
 }
 

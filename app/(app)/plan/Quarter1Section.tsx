@@ -3,6 +3,14 @@
 import { useMemo, useState } from "react";
 
 import {
+  AnimatePresence,
+  motion,
+  Reveal,
+  Stagger,
+  StaggerItem,
+  useReducedMotion,
+} from "@/app/_components/motion";
+import {
   getDayCandidatesForAnchor,
   getRoutingForAnchor,
   hashAnchorId,
@@ -69,6 +77,18 @@ function normalizeCity(s: string | null | undefined): string {
   return head.trim().toLowerCase();
 }
 
+// Mirrors the Stagger/StaggerItem variant shape in app/_components/motion.tsx.
+// Kept local because the local AnchorPill below renders a real <li> (its
+// parent is a <ul>) rather than the <div> StaggerItem would produce.
+const LIST_ITEM_VARIANTS = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
+
 function isStaticSourceId(id: string): boolean {
   return (
     id.startsWith("w1-") ||
@@ -84,6 +104,7 @@ export function Quarter1Section({
   currentAiTileIds,
 }: Props) {
   const [shuffleSeed, setShuffleSeed] = useState(0);
+  const reduce = useReducedMotion();
 
   const current = normalizeCity(currentCity);
   const anchors = useMemo(
@@ -173,53 +194,69 @@ export function Quarter1Section({
 
   return (
     <div>
-      <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1">
-        <h3 className="text-base font-semibold">Your suggested week</h3>
-        {scheduledCount > 0 && (
-          <button
-            type="button"
-            onClick={() => setShuffleSeed((s) => s + 1)}
-            className="text-xs text-[var(--muted-foreground)] underline-offset-2 hover:underline hover:text-[var(--accent)] inline-flex items-center gap-1"
-            aria-label="Reshuffle the suggested days"
-          >
-            ↻ Reshuffle
-          </button>
-        )}
-      </div>
-      <p className="text-sm text-[var(--muted-foreground)] mb-4">
-        A suggested weekly rhythm built from what you&apos;ve kept. Days
-        are a starting point — the actual day is up to you.
-      </p>
+      <Reveal>
+        <div className="flex items-baseline justify-between gap-3 flex-wrap mb-1">
+          <h3 className="text-base font-semibold">Your suggested week</h3>
+          {scheduledCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShuffleSeed((s) => s + 1)}
+              className="text-xs text-[var(--muted-foreground)] underline-offset-2 hover:underline hover:text-[var(--accent)] inline-flex items-center gap-1"
+              aria-label="Reshuffle the suggested days"
+            >
+              ↻ Reshuffle
+            </button>
+          )}
+        </div>
+        <p className="text-sm text-[var(--muted-foreground)] mb-4">
+          A suggested weekly rhythm built from what you&apos;ve kept. Days
+          are a starting point — the actual day is up to you.
+        </p>
+      </Reveal>
 
       {totalAnchors === 0 ? (
         <EmptyState />
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-2">
-            {WEEK_DAYS.map((day) => (
-              <DayCell
-                key={day}
-                day={day}
-                anchors={byDay.get(day) ?? []}
-              />
-            ))}
-          </div>
+          {/* Remounting on shuffleSeed both crossfades the old
+              arrangement out and re-triggers the Stagger cascade for
+              the new one, so a reshuffle reads as a deliberate
+              re-deal rather than a silent content swap. */}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={shuffleSeed}
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduce ? undefined : { opacity: 0 }}
+              transition={{ duration: reduce ? 0 : 0.2 }}
+            >
+              <Stagger className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-2">
+                {WEEK_DAYS.map((day) => (
+                  <StaggerItem key={day}>
+                    <DayCell day={day} anchors={byDay.get(day) ?? []} />
+                  </StaggerItem>
+                ))}
+              </Stagger>
+            </motion.div>
+          </AnimatePresence>
 
           {unslotted.length > 0 && (
-            <div className="mt-4 rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)] p-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">
-                Not part of a recurring slot
-              </p>
-              <p className="text-xs text-[var(--muted-foreground)] mb-3">
-                One-time or setup tasks — kept for reference but don&apos;t
-                shape a weekly rhythm.
-              </p>
-              <ul className="flex flex-wrap gap-2">
-                {unslotted.map((s) => (
-                  <AnchorPill key={s.task.id} anchor={s} />
-                ))}
-              </ul>
-            </div>
+            <Reveal>
+              <div className="mt-4 rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)] p-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">
+                  Not part of a recurring slot
+                </p>
+                <p className="text-xs text-[var(--muted-foreground)] mb-3">
+                  One-time or setup tasks — kept for reference but don&apos;t
+                  shape a weekly rhythm.
+                </p>
+                <Stagger as="ul" className="flex flex-wrap gap-2">
+                  {unslotted.map((s) => (
+                    <AnchorPill key={s.task.id} anchor={s} />
+                  ))}
+                </Stagger>
+              </div>
+            </Reveal>
           )}
 
           <p className="mt-4 text-xs text-[var(--muted-foreground)]">
@@ -309,24 +346,29 @@ function timeOfDayLabel(slot: RoutineSlot): string {
 
 function AnchorPill({ anchor }: { anchor: UnslottedAnchor }) {
   return (
-    <li className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--background)] px-2.5 py-1 text-xs">
+    <motion.li
+      variants={LIST_ITEM_VARIANTS}
+      className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--background)] px-2.5 py-1 text-xs"
+    >
       <span aria-hidden>{anchor.emoji}</span>
       <span>{anchor.task.title}</span>
-    </li>
+    </motion.li>
   );
 }
 
 function EmptyState() {
   return (
-    <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] p-6 text-sm text-[var(--muted-foreground)]">
-      <p className="font-medium text-[var(--foreground)] mb-1">
-        Your week takes shape from what you keep.
-      </p>
-      <p>
-        Try things in <strong>Month 1</strong>, mark any you love as{" "}
-        <strong>Keep</strong>, and they&apos;ll show up here — slotted
-        into the day they&apos;d typically happen.
-      </p>
-    </div>
+    <Reveal>
+      <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] p-6 text-sm text-[var(--muted-foreground)]">
+        <p className="font-medium text-[var(--foreground)] mb-1">
+          Your week takes shape from what you keep.
+        </p>
+        <p>
+          Try things in <strong>Month 1</strong>, mark any you love as{" "}
+          <strong>Keep</strong>, and they&apos;ll show up here — slotted
+          into the day they&apos;d typically happen.
+        </p>
+      </div>
+    </Reveal>
   );
 }

@@ -2,11 +2,24 @@
 
 import { useTransition } from "react";
 
+import { motion } from "@/app/_components/motion";
 import { setKeeperStateAction } from "@/app/actions";
 
 type Props = {
   taskId: string;
   title: string;
+};
+
+// Mirrors the Stagger/StaggerItem variant shape in app/_components/motion.tsx.
+// Kept local because this component's root is a real <li> — its parent
+// (YourWeek) renders a <ul>, and StaggerItem itself renders a <div>.
+const LIST_ITEM_VARIANTS = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
+  },
 };
 
 // Pill chip for an anchor in the "Every week" section. The × button
@@ -22,7 +35,10 @@ export function AnchorPill({ taskId, title }: Props) {
     );
 
   return (
-    <li className="inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)] bg-[var(--background)] px-2.5 py-1 text-xs">
+    <motion.li
+      variants={LIST_ITEM_VARIANTS}
+      className="inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)] bg-[var(--background)] px-2.5 py-1 text-xs"
+    >
       <span aria-hidden>📌</span>
       <span>{title}</span>
       <button
@@ -30,10 +46,10 @@ export function AnchorPill({ taskId, title }: Props) {
         onClick={remove}
         disabled={pending}
         aria-label={`Remove ${title} from your routine`}
-        className="ml-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] leading-none"
+        className="ml-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] leading-none transition-colors duration-200"
       >
         ×
       </button>
-    </li>
+    </motion.li>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useState, type KeyboardEvent } from "react";
 
+import { AnimatePresence, motion, useReducedMotion } from "@/app/_components/motion";
+
 type Props = {
   name: string;
   predefined: readonly string[];
@@ -19,6 +21,7 @@ export function InterestsField({ name, predefined, defaultSelected }: Props) {
     new Set(defaultSelected),
   );
   const [inputValue, setInputValue] = useState("");
+  const reduceMotion = useReducedMotion();
 
   function toggle(tag: string) {
     setSelected((prev) => {
@@ -75,40 +78,47 @@ export function InterestsField({ name, predefined, defaultSelected }: Props) {
   return (
     <div>
       <div className="flex flex-wrap gap-2 items-center">
-        {allTags.map((tag) => {
-          const isSelected = selected.has(tag);
-          const isCustom = !predefinedSet.has(tag);
-          return (
-            <span
-              key={tag}
-              className={`inline-flex items-center rounded-full border text-sm capitalize transition ${
-                isSelected
-                  ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-foreground)]"
-                  : "border-[var(--border)] bg-[var(--card)]"
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => toggle(tag)}
-                className="px-3 py-1.5 cursor-pointer"
+        <AnimatePresence initial={false}>
+          {allTags.map((tag) => {
+            const isSelected = selected.has(tag);
+            const isCustom = !predefinedSet.has(tag);
+            return (
+              <motion.span
+                key={tag}
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: isSelected ? 1.05 : 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2 }}
+                className={`inline-flex items-center rounded-full border text-sm capitalize transition-colors ${
+                  isSelected
+                    ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-foreground)]"
+                    : "border-[var(--border)] bg-[var(--card)]"
+                }`}
               >
-                {tag}
-              </button>
-              {isCustom && (
                 <button
                   type="button"
-                  onClick={() => removeCustom(tag)}
-                  aria-label={`Remove ${tag}`}
-                  className={`pr-2.5 pl-0 leading-none cursor-pointer ${
-                    isSelected ? "opacity-80 hover:opacity-100" : "opacity-60 hover:opacity-100"
-                  }`}
+                  onClick={() => toggle(tag)}
+                  className="px-3 py-1.5 cursor-pointer"
                 >
-                  ×
+                  {tag}
                 </button>
-              )}
-            </span>
-          );
-        })}
+                {isCustom && (
+                  <button
+                    type="button"
+                    onClick={() => removeCustom(tag)}
+                    aria-label={`Remove ${tag}`}
+                    className={`pr-2.5 pl-0 leading-none cursor-pointer ${
+                      isSelected ? "opacity-80 hover:opacity-100" : "opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    ×
+                  </button>
+                )}
+              </motion.span>
+            );
+          })}
+        </AnimatePresence>
 
         <input
           type="text"
@@ -116,7 +126,7 @@ export function InterestsField({ name, predefined, defaultSelected }: Props) {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Add your own…"
-          className="rounded-full border border-dashed border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-sm outline-none focus:border-[var(--accent)] min-w-[160px]"
+          className="rounded-full border border-dashed border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-sm outline-none transition-colors focus:border-[var(--accent)] min-w-[160px]"
           aria-label="Add a custom interest. Press Enter or Tab to add."
         />
       </div>

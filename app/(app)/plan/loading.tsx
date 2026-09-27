@@ -7,6 +7,30 @@
 export default function PlanLoading() {
   return (
     <main className="flex flex-col flex-1 items-center">
+      {/* Scoped shimmer keyframes — a moving highlight reads as "actively
+          loading" more than a plain opacity pulse, and matters here since
+          a cache-miss AI generation can take 15-30s (see PRD). Defined
+          inline (rather than in globals.css, out of scope for this pass)
+          and gated behind prefers-reduced-motion in plain CSS since this
+          file stays a Server Component for the fastest possible paint —
+          no framer-motion / client JS needed just to show a skeleton. */}
+      <style>{`
+        .skeleton-shimmer { position: relative; overflow: hidden; }
+        .skeleton-shimmer::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          transform: translateX(-100%);
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+          animation: plan-skeleton-shimmer 1.6s ease-in-out infinite;
+        }
+        @keyframes plan-skeleton-shimmer {
+          100% { transform: translateX(100%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton-shimmer::after { animation: none; display: none; }
+        }
+      `}</style>
       <div className="w-full max-w-6xl px-6 py-12">
         <span className="text-sm text-[var(--muted-foreground)]">← Home</span>
 
@@ -14,8 +38,8 @@ export default function PlanLoading() {
           <p className="text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
             Your plan
           </p>
-          <div className="mt-2 h-10 w-64 rounded-lg bg-[var(--muted)] animate-pulse" />
-          <div className="mt-3 h-4 w-80 rounded bg-[var(--muted)] animate-pulse" />
+          <div className="skeleton-shimmer mt-2 h-10 w-64 rounded-lg bg-[var(--muted)]" />
+          <div className="skeleton-shimmer mt-3 h-4 w-80 rounded bg-[var(--muted)]" />
         </header>
 
         <section className="mt-12 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
@@ -59,17 +83,17 @@ export default function PlanLoading() {
 function SkeletonSection({ lines }: { lines: number }) {
   return (
     <section>
-      <div className="h-6 w-40 rounded bg-[var(--muted)] animate-pulse" />
+      <div className="skeleton-shimmer h-6 w-40 rounded bg-[var(--muted)]" />
       <ul className="mt-4 space-y-3">
         {Array.from({ length: lines }).map((_, i) => (
           <li
             key={i}
             className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 flex items-start gap-3"
           >
-            <div className="h-6 w-6 rounded-full bg-[var(--muted)] animate-pulse flex-shrink-0" />
+            <div className="skeleton-shimmer h-6 w-6 rounded-full bg-[var(--muted)] flex-shrink-0" />
             <div className="flex-1 space-y-2 min-w-0">
-              <div className="h-4 w-3/4 rounded bg-[var(--muted)] animate-pulse" />
-              <div className="h-3 w-1/2 rounded bg-[var(--muted)] animate-pulse" />
+              <div className="skeleton-shimmer h-4 w-3/4 rounded bg-[var(--muted)]" />
+              <div className="skeleton-shimmer h-3 w-1/2 rounded bg-[var(--muted)]" />
             </div>
           </li>
         ))}

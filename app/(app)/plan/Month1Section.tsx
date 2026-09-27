@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 
+import { Reveal, Stagger, StaggerItem } from "@/app/_components/motion";
 import { loadMoreMonth1TilesAction } from "@/app/actions";
 import type { AiMonth1Tile } from "@/lib/ai/types";
 import type { KeeperState, Task, TaskCategory } from "@/lib/types";
@@ -192,7 +193,9 @@ export function Month1Section({
 
   return (
     <div>
-      <GoalFrame total={total} tried={triedCount} kept={keptCount} />
+      <Reveal>
+        <GoalFrame total={total} tried={triedCount} kept={keptCount} />
+      </Reveal>
 
       <div className="mt-6 space-y-8">
         {useAi ? (
@@ -229,7 +232,7 @@ export function Month1Section({
                 prompt="Pick what sounds most like you."
                 hasKeeper={false}
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-start">
+                <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-start">
                   {goalTiles.map((s) => {
                     const backing = taskMap[s.tile.id];
                     // Derive `completed` from live taskMap, not from
@@ -239,13 +242,14 @@ export function Month1Section({
                     // tile is "✓ done", so backing-exists implies
                     // completed — same as the extras branch below.
                     return (
-                      <Month1AiTile
-                        key={s.tile.id}
-                        tile={s.tile}
-                        completed={!!backing}
-                        taskId={backing?.taskId ?? null}
-                        keeperState={backing?.keeperState ?? null}
-                      />
+                      <StaggerItem key={s.tile.id}>
+                        <Month1AiTile
+                          tile={s.tile}
+                          completed={!!backing}
+                          taskId={backing?.taskId ?? null}
+                          keeperState={backing?.keeperState ?? null}
+                        />
+                      </StaggerItem>
                     );
                   })}
                   {goalExtras.map((t) => {
@@ -254,13 +258,14 @@ export function Month1Section({
                     // click (we removed "+ plan"), so backing-exists implies
                     // completed.
                     return (
-                      <Month1AiTile
-                        key={t.id}
-                        tile={t}
-                        completed={!!backing}
-                        taskId={backing?.taskId ?? null}
-                        keeperState={backing?.keeperState ?? null}
-                      />
+                      <StaggerItem key={t.id}>
+                        <Month1AiTile
+                          tile={t}
+                          completed={!!backing}
+                          taskId={backing?.taskId ?? null}
+                          keeperState={backing?.keeperState ?? null}
+                        />
+                      </StaggerItem>
                     );
                   })}
                   {isLoading && (
@@ -274,7 +279,7 @@ export function Month1Section({
                     Array.from({ length: missingCount }).map((_, i) => (
                       <MissingTileCard key={`missing-${goal}-${i}`} />
                     ))}
-                </div>
+                </Stagger>
                 <div className="mt-3 flex items-center gap-3 min-h-5">
                   {!alreadyLoaded && (
                     <button
@@ -313,15 +318,16 @@ export function Month1Section({
                   prompt={cluster.prompt}
                   hasKeeper={hasKeeper}
                 >
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <Stagger className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {clusterTasks.map((task) => (
-                      <Month1Tile
-                        key={task.id}
-                        task={task}
-                        isToday={focusIds.has(task.id)}
-                      />
+                      <StaggerItem key={task.id}>
+                        <Month1Tile
+                          task={task}
+                          isToday={focusIds.has(task.id)}
+                        />
+                      </StaggerItem>
                     ))}
-                  </div>
+                  </Stagger>
                 </ClusterSection>
               );
             })}
@@ -331,15 +337,16 @@ export function Month1Section({
                 prompt="Tasks added from your recommendations."
                 hasKeeper={false}
               >
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <Stagger className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {(tasksByCategory.get("essentials") ?? []).map((task) => (
-                    <Month1Tile
-                      key={task.id}
-                      task={task}
-                      isToday={focusIds.has(task.id)}
-                    />
+                    <StaggerItem key={task.id}>
+                      <Month1Tile
+                        task={task}
+                        isToday={focusIds.has(task.id)}
+                      />
+                    </StaggerItem>
                   ))}
-                </div>
+                </Stagger>
               </ClusterSection>
             )}
           </>
@@ -420,9 +427,18 @@ function MissingTileCard() {
       className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--background)] overflow-hidden flex flex-col items-center justify-center p-5 text-center min-h-[180px]"
       aria-label="Suggestion unavailable"
     >
-      <span className="text-2xl mb-2" aria-hidden>
-        ⚠️
-      </span>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.75}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-7 w-7 mb-2 text-[var(--muted-foreground)]"
+        aria-hidden
+      >
+        <path d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14.14A1.5 1.5 0 0 0 3.38 20.5h17.24a1.5 1.5 0 0 0 1.27-2.5L13.71 3.86a1.5 1.5 0 0 0-2.42 0z" />
+      </svg>
       <p className="text-sm font-medium leading-snug">
         Couldn&apos;t load a fresh suggestion
       </p>
